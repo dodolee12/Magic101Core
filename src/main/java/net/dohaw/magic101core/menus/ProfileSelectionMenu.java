@@ -2,7 +2,7 @@ package net.dohaw.magic101core.menus;
 
 import net.dohaw.corelib.JPUtils;
 import net.dohaw.corelib.menus.Menu;
-import net.dohaw.magic101core.profiles.ALL_PROFILES;
+import net.dohaw.magic101core.utils.ALL_PROFILES;
 import net.dohaw.magic101core.profiles.Profile;
 import net.dohaw.magic101core.profiles.ProfileCreationSession;
 import org.bukkit.Material;
@@ -32,14 +32,15 @@ public class ProfileSelectionMenu extends Menu implements Listener {
         if(profileList != null){
             for(int i = 0; i < profileList.size(); ++i){
                 Profile profile = profileList.get(i);
-                List<String> lore = new ArrayList<>();
-                lore.add("&cCharacter name: &e" + profile.getCharacterName());
-                lore.add("&cClass: &e" + profile.getSchool().toString());
-                lore.add(profile.getStats().toString());
-                lore.add("");
-                lore.add("&7Left-Click to Select");
-                lore.add("&7Right-Click to Edit");
-                lore.add("&7Shift+Right-Click to Delete");
+                List<String> lore = new ArrayList<String>(){{
+                    add("&cCharacter name: &e" + profile.getCharacterName());
+                    add("&cClass: &e" + profile.getSchool().toString());
+                    add(profile.getStats().toString());
+                    add("");
+                    add("&7Left-Click to Select");
+                    add("&7Right-Click to Edit");
+                    add("&7Shift+Right-Click to Delete");
+                }};
                 inv.setItem(i, createGuiItem(Material.PLAYER_HEAD, profile.getProfileName(), lore));
             }
         }

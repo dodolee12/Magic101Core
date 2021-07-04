@@ -1,4 +1,6 @@
-package net.dohaw.magic101core.profiles;
+package net.dohaw.magic101core.utils;
+
+import net.dohaw.magic101core.profiles.Profile;
 
 import java.util.*;
 

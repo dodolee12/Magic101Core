@@ -1,8 +1,8 @@
 package net.dohaw.magic101core.profiles;
 
 public class Health {
-    int currentHealth;
-    int maxHealth;
+    private int currentHealth;
+    private int maxHealth;
 
     public Health(int maxHealth){
         this.maxHealth = maxHealth;
@@ -11,5 +11,21 @@ public class Health {
 
     public String toString(){
         return "" + maxHealth;
+    }
+
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public void setCurrentHealth(int currentHealth) {
+        this.currentHealth = currentHealth;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
     }
 }

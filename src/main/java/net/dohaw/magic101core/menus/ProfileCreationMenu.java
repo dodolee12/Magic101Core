@@ -4,6 +4,8 @@ import net.dohaw.corelib.JPUtils;
 import net.dohaw.corelib.StringUtils;
 import net.dohaw.corelib.menus.Menu;
 import net.dohaw.magic101core.profiles.*;
+import net.dohaw.magic101core.utils.ALL_PROFILES;
+import net.dohaw.magic101core.utils.Constants;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
@@ -92,7 +94,8 @@ public class ProfileCreationMenu extends Menu implements Listener {
                     break;
             }
             ConversationFactory cf = new ConversationFactory(plugin);
-            Conversation conv = cf.withFirstPrompt(new ProfileCreationSessionPrompt(change, session,this)).withLocalEcho(false).buildConversation(player);;
+            Conversation conv = cf.withFirstPrompt(new ProfileCreationSessionPrompt(change, session,this))
+                    .withLocalEcho(false).buildConversation(player);;
             conv.begin();
 
             player.closeInventory();
@@ -117,7 +120,9 @@ public class ProfileCreationMenu extends Menu implements Listener {
                 if(profileList == null){
                     profileList = new ArrayList<>();
                 }
-                profileList.add(new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(), new Stats(1,new Health(100)),session,true));
+                profileList.add(new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(),
+                        new Stats(1,new Health(Constants.schoolToBaseHealth.get(session.getSchool()))),session,
+                        true));
                 player.closeInventory();
                 player.sendMessage(StringUtils.colorString("&bYou have created your class"));
                 ALL_PROFILES.ALL_PROFILES_MAP.put(playerUUID,profileList);
