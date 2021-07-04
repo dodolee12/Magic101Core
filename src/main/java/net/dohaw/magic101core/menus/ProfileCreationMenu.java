@@ -21,11 +21,17 @@ import java.util.UUID;
 public class ProfileCreationMenu extends Menu implements Listener {
 
     private ProfileCreationSession session;
+    private boolean create;
+    private int slotClicked;
+    private ProfileSelectionMenu prevMenu;
 
-    public ProfileCreationMenu(JavaPlugin plugin, ProfileCreationSession session) {
+    public ProfileCreationMenu(JavaPlugin plugin, ProfileCreationSession session, boolean create, int slotClicked, ProfileSelectionMenu prevMenu) {
         super(plugin, null, "Profile Creation", 45);
         this.session = session;
         JPUtils.registerEvents(this);
+        this.create = create;
+        this.slotClicked = slotClicked;
+        this.prevMenu = prevMenu;
     }
 
     @Override
@@ -43,12 +49,14 @@ public class ProfileCreationMenu extends Menu implements Listener {
 
         inv.setItem(13, createGuiItem(Material.STICK, "&eChange Character Name", characterNameLore));
 
-        List<String> classNameLore = new ArrayList<String>(){{
-            add("&cCurrent Class Selected: &e" + (session.getSchool() == null ? "None" : session.getSchool().toString()));
-        }};
+        if(create) {
+            List<String> classNameLore = new ArrayList<String>() {{
+                add("&cCurrent Class Selected: &e" + (session.getSchool() == null ? "None" : session.getSchool().toString()));
+            }};
+            inv.setItem(15, createGuiItem(Material.STICK, "&eChange Class", classNameLore));
+        }
 
-        inv.setItem(15, createGuiItem(Material.STICK, "&eChange Class", classNameLore));
-        inv.setItem(31, createGuiItem(Material.STICK, "&eCreate Profile", new ArrayList<>()));
+        inv.setItem(31, createGuiItem(Material.STICK, create ? "&eCreate Profile" : "&eEdit Profile", new ArrayList<>()));
 
     }
 
@@ -91,7 +99,7 @@ public class ProfileCreationMenu extends Menu implements Listener {
 
         }
         //class selection
-        else if(slotClicked == 15) {
+        else if(slotClicked == 15 && create) {
             Menu newMenu = new ClassSelectionMenu(plugin,this, session);
             newMenu.initializeItems(player);
             player.closeInventory();
@@ -101,13 +109,28 @@ public class ProfileCreationMenu extends Menu implements Listener {
         else if(slotClicked == 31){
             UUID playerUUID = player.getUniqueId();
             List<Profile> profileList = ALL_PROFILES.ALL_PROFILES_MAP.get(playerUUID);
-            if(profileList == null){
-                profileList = new ArrayList<>();
+            if(create){
+                if(session.getCharacterName().equals("Not Set") || session.getSchool() == null){
+                    player.sendMessage("Please set a character name and a class.");
+                    return;
+                }
+                if(profileList == null){
+                    profileList = new ArrayList<>();
+                }
+                profileList.add(new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(), new Stats(1,new Health(100)),session,true));
+                player.closeInventory();
+                player.sendMessage(StringUtils.colorString("&bYou have created your class"));
+                ALL_PROFILES.ALL_PROFILES_MAP.put(playerUUID,profileList);
             }
-            profileList.add(new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(), new Stats(1,new Health(100))));
-            player.closeInventory();
-            player.sendMessage(StringUtils.colorString("&bYou have created your class"));
-            ALL_PROFILES.ALL_PROFILES_MAP.put(playerUUID,profileList);
+            else{
+                Profile profile = ALL_PROFILES.ALL_PROFILES_MAP.get(playerUUID).get(this.slotClicked);
+                profile.setSession(session);
+                profile.setProfileName(session.getProfileName());
+                profile.setCharacterName(session.getCharacterName());
+                prevMenu.initializeItems(player);
+                player.closeInventory();
+                prevMenu.openInventory(player);
+            }
         }
 
     }

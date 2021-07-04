@@ -9,12 +9,32 @@ public class Profile {
     private Stats stats;
     //private List<> customItems + items
     private Location logoutLocation;
+    private ProfileCreationSession session;
+    private boolean active;
 
-    public Profile(String profileName, String characterName, Schools school, Stats stats){
+    public Profile(String profileName, String characterName, Schools school, Stats stats, ProfileCreationSession session, boolean active){
         this.profileName = profileName;
         this.characterName = characterName;
         this.school = school;
         this.stats = stats;
+        this.session = session;
+        this.active = active;
+    }
+
+    public ProfileCreationSession getSession() {
+        return session;
+    }
+
+    public void setSession(ProfileCreationSession session) {
+        this.session = session;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public String getProfileName() {

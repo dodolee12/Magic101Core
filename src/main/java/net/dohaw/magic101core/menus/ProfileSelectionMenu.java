@@ -33,14 +33,18 @@ public class ProfileSelectionMenu extends Menu implements Listener {
             for(int i = 0; i < profileList.size(); ++i){
                 Profile profile = profileList.get(i);
                 List<String> lore = new ArrayList<>();
-                lore.add("Character name: " + profile.getCharacterName());
-                lore.add("Class: " + profile.getSchool().toString());
+                lore.add("&cCharacter name: &e" + profile.getCharacterName());
+                lore.add("&cClass: &e" + profile.getSchool().toString());
                 lore.add(profile.getStats().toString());
+                lore.add("");
+                lore.add("&7Left-Click to Select");
+                lore.add("&7Right-Click to Edit");
+                lore.add("&7Shift+Right-Click to Delete");
                 inv.setItem(i, createGuiItem(Material.PLAYER_HEAD, profile.getProfileName(), lore));
             }
         }
         //TODO restrict profile number based on rank
-        inv.setItem(38, createGuiItem(Material.STICK, "&eCreate new Profile", new ArrayList<>()));
+        inv.setItem(40, createGuiItem(Material.STICK, "&eCreate new Profile", new ArrayList<>()));
 
     }
 
@@ -56,17 +60,25 @@ public class ProfileSelectionMenu extends Menu implements Listener {
         e.setCancelled(true);
         if(clickedItem == null || clickedItem.getType().equals(Material.AIR)) return;
 
-        Menu newMenu = null;
-        switch(slotClicked){
-            case 38:
-                newMenu = new ProfileCreationMenu(plugin, new ProfileCreationSession());
-                break;
-        }
-
-        if(newMenu != null){
+        if(slotClicked == 40){
+            Menu newMenu = new ProfileCreationMenu(plugin, new ProfileCreationSession(), true, 0, this);
             newMenu.initializeItems(player);
             player.closeInventory();
             newMenu.openInventory(player);
         }
+        else if(e.getClick().isShiftClick() && e.getClick().isRightClick()){
+            ALL_PROFILES.ALL_PROFILES_MAP.get(player.getUniqueId()).remove(slotClicked);
+            player.closeInventory();
+            this.initializeItems(player);
+            this.openInventory(player);
+        }
+        else if(e.getClick().isRightClick()){
+            Profile profile = ALL_PROFILES.ALL_PROFILES_MAP.get(player.getUniqueId()).get(slotClicked);
+            Menu newMenu = new ProfileCreationMenu(plugin, profile.getSession(), false, slotClicked, this);
+            newMenu.initializeItems(player);
+            player.closeInventory();
+            newMenu.openInventory(player);
+        }
+
     }
 }
