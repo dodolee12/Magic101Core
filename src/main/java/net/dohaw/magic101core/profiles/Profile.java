@@ -3,6 +3,7 @@ package net.dohaw.magic101core.profiles;
 import org.bukkit.Location;
 
 public class Profile {
+
     private String profileName;
     private String characterName;
     private Schools school;

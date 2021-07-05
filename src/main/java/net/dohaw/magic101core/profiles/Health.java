@@ -1,6 +1,7 @@
 package net.dohaw.magic101core.profiles;
 
 public class Health {
+
     private int currentHealth;
     private int maxHealth;
 

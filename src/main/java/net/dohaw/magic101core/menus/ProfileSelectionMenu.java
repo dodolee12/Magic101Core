@@ -47,6 +47,9 @@ public class ProfileSelectionMenu extends Menu implements Listener {
         //TODO restrict profile number based on rank
         inv.setItem(40, createGuiItem(Material.STICK, "&eCreate new Profile", new ArrayList<>()));
 
+        this.fillerMat = Material.BLACK_STAINED_GLASS_PANE;
+        fillMenu(false);
+
     }
 
     @Override

@@ -60,6 +60,9 @@ public class ProfileCreationMenu extends Menu implements Listener {
 
         inv.setItem(31, createGuiItem(Material.STICK, create ? "&eCreate Profile" : "&eEdit Profile", new ArrayList<>()));
 
+        this.fillerMat = Material.BLACK_STAINED_GLASS_PANE;
+        fillMenu(false);
+
     }
 
     public ProfileCreationSession getSession() {
