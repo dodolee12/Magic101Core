@@ -83,7 +83,7 @@ public class ProfileCreationMenu extends Menu implements Listener {
         if(e.getClickedInventory() == null) return;
         if(!e.getClickedInventory().equals(inv)) return;
         e.setCancelled(true);
-        if(clickedItem == null || clickedItem.getType().equals(Material.AIR)) return;
+        if(clickedItem == null || clickedItem.getType().equals(Material.AIR) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) return;
 
         //prof/char name select
         if(slotClicked == 11 || slotClicked == 13){
@@ -127,10 +127,17 @@ public class ProfileCreationMenu extends Menu implements Listener {
                 if(profileList == null){
                     profileList = new ArrayList<>();
                 }
-                profileList.add(new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(),
-                                1,new Health(Constants.schoolToBaseHealth.get(session.getSchool())),session,
-                        true));
+                Profile newProfile = new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(),
+                        1,new Health(Constants.schoolToBaseHealth.get(session.getSchool())),session,
+                        true);
+                profileList.add(newProfile);
+
+                Profile oldProfile = ALL_PROFILES.findActiveProfile(playerUUID);
+                if(oldProfile != null){
+                    oldProfile.saveProfile(player);
+                }
                 player.closeInventory();
+                newProfile.loadProfile(player);
                 player.sendMessage(StringUtils.colorString("&bYou have created your class"));
                 ALL_PROFILES.ALL_PROFILES_MAP.put(playerUUID,profileList);
             }

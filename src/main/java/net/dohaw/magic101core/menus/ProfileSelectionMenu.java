@@ -46,7 +46,7 @@ public class ProfileSelectionMenu extends Menu implements Listener {
             }
         }
         //TODO restrict profile number based on rank
-        inv.setItem(40, createGuiItem(Material.STICK, "&eCreate new Profile", new ArrayList<>()));
+        inv.setItem(profileList == null ? 22 : 40, createGuiItem(Material.STICK, "&eCreate new Profile", new ArrayList<>()));
 
         this.fillerMat = Material.BLACK_STAINED_GLASS_PANE;
         fillMenu(false);
@@ -63,12 +63,13 @@ public class ProfileSelectionMenu extends Menu implements Listener {
         if(e.getClickedInventory() == null) return;
         if(!e.getClickedInventory().equals(inv)) return;
         e.setCancelled(true);
-        if(clickedItem == null || clickedItem.getType().equals(Material.AIR)) return;
+        if(clickedItem == null || clickedItem.getType().equals(Material.AIR) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) return;
 
         UUID playerUUID = player.getUniqueId();
         String profileName = clickedItem.getItemMeta().getDisplayName();
+        List<Profile> profileList = ALL_PROFILES.ALL_PROFILES_MAP.get(player.getUniqueId());
 
-        if(slotClicked == 40){
+        if((profileList != null && slotClicked == 40) || (profileList == null && slotClicked == 22)){
             Menu newMenu = new ProfileCreationMenu(plugin, new ProfileCreationSession(), true, 0, this);
             newMenu.initializeItems(player);
             player.closeInventory();
@@ -93,12 +94,12 @@ public class ProfileSelectionMenu extends Menu implements Listener {
         else if(e.getClick().isLeftClick()){
             Profile oldProfile = ALL_PROFILES.findActiveProfile(playerUUID);
             if(oldProfile != null){
-                oldProfile.setActive(false);
+                oldProfile.saveProfile(player);
             }
             Profile newProfile = ALL_PROFILES.getProfileByProfileName(playerUUID,profileName);
-            newProfile.setActive(true);
             player.closeInventory();
             player.sendMessage("You have selected the " + profileName + " profile.");
+            newProfile.loadProfile(player);
             //TODO Load profile
         }
 

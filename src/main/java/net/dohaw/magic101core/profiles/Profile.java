@@ -1,6 +1,9 @@
 package net.dohaw.magic101core.profiles;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +19,9 @@ public class Profile {
     private Health health;
     private ProfileCreationSession session;
     private boolean active;
-    private Inventory playerInventory;
+    private ItemStack[] equippedArmor;
+    private ItemStack[] storageItems;
+    private ItemStack[] extraItems;
     private Location logoutLocation;
 
 
@@ -28,10 +33,13 @@ public class Profile {
         this.health = health;
         this.session = session;
         this.active = active;
+        this.logoutLocation = Bukkit.getWorld("world").getSpawnLocation();
     }
 
     //constructor for laoading
-    public Profile(String profileName, String characterName, Schools school, int level, Health health, ProfileCreationSession session, Location logoutLocation) {
+    public Profile(String profileName, String characterName, Schools school, int level,
+                   Health health, ProfileCreationSession session, Location logoutLocation,
+                   ItemStack[] equippedArmor, ItemStack[] storageItems, ItemStack[] extraItems) {
         this.profileName = profileName;
         this.characterName = characterName;
         this.school = school;
@@ -39,13 +47,36 @@ public class Profile {
         this.health = health;
         this.session = session;
         this.logoutLocation = logoutLocation;
+        this.equippedArmor = equippedArmor;
+        this.storageItems = storageItems;
+        this.extraItems = extraItems;
     }
 
     //eventually add inventory
-    public static Profile loadProfileFromConfig(String profileName, String characterName, Schools school, int level, int maxHealth, int currentHealth, Location logoutLocation){
+    public static Profile loadProfileFromConfig(String profileName, String characterName, Schools school,
+                                                int level, int maxHealth, int currentHealth, Location logoutLocation,
+                                                ItemStack[] equippedArmor, ItemStack[] storageItems,  ItemStack[] extraItems){
         Health profileHealth = Health.loadHealthFromConfig(maxHealth, currentHealth);
         ProfileCreationSession session = new ProfileCreationSession(profileName,characterName,school);
-        return new Profile(profileName,characterName,school,level,profileHealth,session,logoutLocation);
+        return new Profile(profileName,characterName,school,level,profileHealth,session,logoutLocation, equippedArmor, storageItems, extraItems);
+    }
+
+    public void saveProfile(Player player){
+        setActive(false);
+        setLogoutLocation(player.getLocation());
+        setEquippedArmor(player.getEquipment().getArmorContents());
+        setStorageItems(player.getInventory().getStorageContents());
+        setExtraItems(player.getInventory().getExtraContents());
+        player.getInventory().clear();
+    }
+
+    public void loadProfile(Player player){
+        setActive(true);
+        player.getEquipment().setArmorContents(equippedArmor);
+        player.getInventory().setStorageContents(storageItems);
+        player.getInventory().setExtraContents(extraItems);
+        player.teleport(logoutLocation);
+
     }
 
     public ProfileCreationSession getSession() {
@@ -112,12 +143,28 @@ public class Profile {
         this.logoutLocation = logoutLocation;
     }
 
-    public Inventory getPlayerInventory() {
-        return playerInventory;
+    public ItemStack[] getEquippedArmor() {
+        return equippedArmor;
     }
 
-    public void setPlayerInventory(Inventory playerInventory) {
-        this.playerInventory = playerInventory;
+    public void setEquippedArmor(ItemStack[] equippedArmor) {
+        this.equippedArmor = equippedArmor;
+    }
+
+    public ItemStack[] getStorageItems() {
+        return storageItems;
+    }
+
+    public void setStorageItems(ItemStack[] storageItems) {
+        this.storageItems = storageItems;
+    }
+
+    public ItemStack[] getExtraItems() {
+        return extraItems;
+    }
+
+    public void setExtraItems(ItemStack[] extraItems) {
+        this.extraItems = extraItems;
     }
 }
 /*

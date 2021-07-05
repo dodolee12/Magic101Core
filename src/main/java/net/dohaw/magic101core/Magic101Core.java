@@ -2,15 +2,18 @@ package net.dohaw.magic101core;
 
 import net.dohaw.corelib.CoreLib;
 import net.dohaw.corelib.JPUtils;
+import net.dohaw.magic101core.commands.ProfileSelectCommand;
 import net.dohaw.magic101core.profiles.Profile;
 import net.dohaw.magic101core.profiles.Schools;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -25,9 +28,11 @@ public final class Magic101Core extends JavaPlugin {
     @Override
     public void onEnable() {
         CoreLib.setInstance(this);
-        JPUtils.registerEvents(new EventListener(this));
         validateConfigs();
         loadCustomConfigs();
+
+        JPUtils.registerEvents(new EventListener(this));
+        JPUtils.registerCommand("profile",new ProfileSelectCommand(this));
     }
 
     @Override
@@ -62,14 +67,50 @@ public final class Magic101Core extends JavaPlugin {
                 }
                 String profileName = profileConfig.getString("profile-name");
                 String characterName = profileConfig.getString("character-name");
-                Schools school = Schools.valueOf(profileConfig.getString("school-name"));
+                Schools school = null;
+                if(profileConfig.getString("school-name") != null){
+                    school = Schools.valueOf(profileConfig.getString("school-name"));
+
+                }
                 int level = profileConfig.getInt("level");
                 int maxHealth = profileConfig.getInt("max-health");
                 int currentHealth = profileConfig.getInt("current-health");
                 Location logoutLocation = profileConfig.getLocation("logout-location");
+
                 OfflinePlayer player = profileConfig.getOfflinePlayer("offline-player");
+                ConfigurationSection armorConfigItems = profileConfig.getConfigurationSection("armor");
+                ItemStack[] equippedItems = null;
+                if(armorConfigItems != null){
+                    equippedItems = new ItemStack[armorConfigItems.getKeys(false).size()];
+                    int i = 0;
+                    for(String key: armorConfigItems.getKeys(false)){
+                        equippedItems[i++] = armorConfigItems.getItemStack(key);
+                    }
+                }
+
+                ItemStack[] storageItems = null;
+                ConfigurationSection storageConfigItems = profileConfig.getConfigurationSection("storage");
+                if(storageConfigItems != null){
+                    storageItems = new ItemStack[storageConfigItems.getKeys(false).size()];
+                    int i = 0;
+                    for(String key: storageConfigItems.getKeys(false)){
+                        storageItems[i++] = storageConfigItems.getItemStack(key);
+                    }
+                }
+
+                ItemStack[] extraItems = null;
+                ConfigurationSection extraConfigItems = profileConfig.getConfigurationSection("extra");
+                if(extraConfigItems != null){
+                    extraItems = new ItemStack[extraConfigItems.getKeys(false).size()];
+                    int i = 0;
+                    for(String key: extraConfigItems.getKeys(false)){
+                        extraItems[i++] = extraConfigItems.getItemStack(key);
+                    }
+                }
+
+
                 Profile createdProfile = Profile.loadProfileFromConfig(profileName,characterName,
-                        school,level,maxHealth,currentHealth,logoutLocation);
+                        school,level,maxHealth,currentHealth,logoutLocation, equippedItems, storageItems, extraItems);
                 UUID playerUUID = player.getUniqueId();
                 if(!ALL_PROFILES.ALL_PROFILES_MAP.containsKey(playerUUID)){
                     ALL_PROFILES.ALL_PROFILES_MAP.put(playerUUID, new ArrayList<>());
@@ -107,12 +148,25 @@ public final class Magic101Core extends JavaPlugin {
                 }
                 profileConfig.set("profile-name", profile.getProfileName());
                 profileConfig.set("character-name", profile.getCharacterName());
-                profileConfig.set("school-name", profile.getSchool().toString());
+                profileConfig.set("school-name", profile.getSchool().name());
                 profileConfig.set("level", profile.getLevel());
                 profileConfig.set("max-health", profile.getHealth().getMaxHealth());
                 profileConfig.set("current-health", profile.getHealth().getCurrentHealth());
                 profileConfig.set("logout-location", profile.getLogoutLocation());
                 profileConfig.set("offline-player", Bukkit.getOfflinePlayer(playerUUID));
+
+                for(int i = 0; i < profile.getEquippedArmor().length; ++i){
+                    profileConfig.set("armor." + i,profile.getEquippedArmor()[i]);
+                }
+
+                for(int i = 0; i < profile.getStorageItems().length; ++i){
+                    profileConfig.set("storage." + i, profile.getStorageItems()[i]);
+                }
+
+                for(int i = 0; i < profile.getExtraItems().length; ++i){
+                    profileConfig.set("extra." + i, profile.getExtraItems()[i]);
+                }
+
                 try{
                     profileConfig.save(profileFile);
                 }catch(Exception e) {

@@ -2,6 +2,7 @@ package net.dohaw.magic101core.items;
 
 public class ItemProperties {
     private int level; //Level requirement
+    private int damage;
     private int maxHealth; // increase max health
     private int pierce; //pierce percentage
     private int critChance; //
@@ -14,10 +15,11 @@ public class ItemProperties {
     private int notice;
     private int incomingHealing;
 
-    public ItemProperties(int level, int maxHealth, int pierce, int critChance, int stunChance,
+    public ItemProperties(int level, int damage, int maxHealth, int pierce, int critChance, int stunChance,
                           int defense, int lifesteal, int lingeringChance, int lingeringDamage,
                           int outgoingHealing, int notice, int incomingHealing){
         this.level = level;
+        this.damage = damage;
         this.maxHealth = maxHealth;
         this.pierce = pierce;
         this.critChance = critChance;
@@ -37,6 +39,14 @@ public class ItemProperties {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
     public int getMaxHealth() {

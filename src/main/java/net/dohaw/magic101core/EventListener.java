@@ -3,7 +3,6 @@ package net.dohaw.magic101core;
 import net.dohaw.magic101core.menus.ProfileSelectionMenu;
 import net.dohaw.magic101core.profiles.Profile;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +22,7 @@ public class EventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         Player player = e.getPlayer();
+        player.getInventory().clear();
         ProfileSelectionMenu profileSelectionMenu = new ProfileSelectionMenu(plugin);
         profileSelectionMenu.initializeItems(player);
         profileSelectionMenu.openInventory(player);
@@ -36,14 +36,10 @@ public class EventListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
         Player player = e.getPlayer();
-        Location logoutLocation = player.getLocation();
         Profile profile = ALL_PROFILES.findActiveProfile(player.getUniqueId());
         if(profile == null){
             return;
         }
-        profile.setActive(false);
-        profile.setLogoutLocation(logoutLocation);
-        profile.setPlayerInventory(player.getInventory());
-        player.getInventory().clear();
+        profile.saveProfile(player);
     }
 }
