@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ProfileSelectionMenu extends Menu implements Listener {
 
@@ -35,7 +36,7 @@ public class ProfileSelectionMenu extends Menu implements Listener {
                 List<String> lore = new ArrayList<String>(){{
                     add("&cCharacter name: &e" + profile.getCharacterName());
                     add("&cClass: &e" + profile.getSchool().toString());
-                    add(profile.getStats().toString());
+                    add("&cLevel: " + profile.getLevel() + ", Health: " + profile.getHealth().getMaxHealth());
                     add("");
                     add("&7Left-Click to Select");
                     add("&7Right-Click to Edit");
@@ -61,6 +62,9 @@ public class ProfileSelectionMenu extends Menu implements Listener {
         e.setCancelled(true);
         if(clickedItem == null || clickedItem.getType().equals(Material.AIR)) return;
 
+        UUID playerUUID = player.getUniqueId();
+        String profileName = clickedItem.getItemMeta().getDisplayName();
+
         if(slotClicked == 40){
             Menu newMenu = new ProfileCreationMenu(plugin, new ProfileCreationSession(), true, 0, this);
             newMenu.initializeItems(player);
@@ -68,17 +72,31 @@ public class ProfileSelectionMenu extends Menu implements Listener {
             newMenu.openInventory(player);
         }
         else if(e.getClick().isShiftClick() && e.getClick().isRightClick()){
-            ALL_PROFILES.ALL_PROFILES_MAP.get(player.getUniqueId()).remove(slotClicked);
+            //remove profile
+            Profile profileToRemove = ALL_PROFILES.getProfileByProfileName(playerUUID,profileName);
+            ALL_PROFILES.ALL_PROFILES_MAP.remove(playerUUID).remove(profileToRemove);
+            this.clearItems();
             player.closeInventory();
             this.initializeItems(player);
             this.openInventory(player);
         }
         else if(e.getClick().isRightClick()){
-            Profile profile = ALL_PROFILES.ALL_PROFILES_MAP.get(player.getUniqueId()).get(slotClicked);
+            Profile profile = ALL_PROFILES.getProfileByProfileName(playerUUID,profileName);
             Menu newMenu = new ProfileCreationMenu(plugin, profile.getSession(), false, slotClicked, this);
             newMenu.initializeItems(player);
             player.closeInventory();
             newMenu.openInventory(player);
+        }
+        else if(e.getClick().isLeftClick()){
+            Profile oldProfile = ALL_PROFILES.findActiveProfile(playerUUID);
+            if(oldProfile != null){
+                oldProfile.setActive(false);
+            }
+            Profile newProfile = ALL_PROFILES.getProfileByProfileName(playerUUID,profileName);
+            newProfile.setActive(true);
+            player.closeInventory();
+            player.sendMessage("You have selected the " + profileName + " profile.");
+            //TODO Load profile
         }
 
     }

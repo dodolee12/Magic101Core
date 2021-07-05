@@ -6,6 +6,15 @@ public class ProfileCreationSession {
     private String characterName = "Not Set";
     private Schools school = null;
 
+    public ProfileCreationSession(){
+    }
+
+    public ProfileCreationSession(String profileName, String characterName, Schools school) {
+        this.profileName = profileName;
+        this.characterName = characterName;
+        this.school = school;
+    }
+
     public String getCharacterName() {
         return characterName;
     }
@@ -30,7 +39,6 @@ public class ProfileCreationSession {
         this.profileName = profileName;
     }
 
-    public ProfileCreationSession(){
-    }
+
 
 }

@@ -58,7 +58,7 @@ public class ProfileCreationMenu extends Menu implements Listener {
             inv.setItem(15, createGuiItem(Material.STICK, "&eChange Class", classNameLore));
         }
 
-        inv.setItem(31, createGuiItem(Material.STICK, create ? "&eCreate Profile" : "&eEdit Profile", new ArrayList<>()));
+        inv.setItem(31, createGuiItem(Material.STICK, create ? "&eCreate Profile" : "&eSave", new ArrayList<>()));
 
     }
 
@@ -117,11 +117,15 @@ public class ProfileCreationMenu extends Menu implements Listener {
                     player.sendMessage("Please set a character name and a class.");
                     return;
                 }
+                if(ALL_PROFILES.getProfileByProfileName(playerUUID, session.getProfileName()) != null){
+                    player.sendMessage("Your profile name must be different from all other profiles.");
+                    return;
+                }
                 if(profileList == null){
                     profileList = new ArrayList<>();
                 }
                 profileList.add(new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(),
-                        new Stats(1,new Health(Constants.schoolToBaseHealth.get(session.getSchool()))),session,
+                                1,new Health(Constants.schoolToBaseHealth.get(session.getSchool())),session,
                         true));
                 player.closeInventory();
                 player.sendMessage(StringUtils.colorString("&bYou have created your class"));
