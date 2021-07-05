@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-
 public final class Magic101Core extends JavaPlugin {
 
     private File profileFolder;
@@ -135,6 +134,5 @@ public final class Magic101Core extends JavaPlugin {
             }
         }
         return dir.delete();
-
     }
 }
