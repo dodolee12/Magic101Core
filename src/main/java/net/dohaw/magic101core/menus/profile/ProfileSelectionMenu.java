@@ -1,7 +1,8 @@
-package net.dohaw.magic101core.menus;
+package net.dohaw.magic101core.menus.profile;
 
 import net.dohaw.corelib.JPUtils;
 import net.dohaw.corelib.menus.Menu;
+import net.dohaw.magic101core.menus.profile.ProfileCreationMenu;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
 import net.dohaw.magic101core.profiles.Profile;
 import net.dohaw.magic101core.profiles.ProfileCreationSession;
@@ -18,8 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ProfileSelectionMenu extends Menu implements Listener {
-
-    private JavaPlugin plugin;
 
     public ProfileSelectionMenu(JavaPlugin plugin) {
         super(plugin, null, "Profile Selection", 45);
@@ -100,7 +99,6 @@ public class ProfileSelectionMenu extends Menu implements Listener {
             player.closeInventory();
             player.sendMessage("You have selected the " + profileName + " profile.");
             newProfile.loadProfile(player);
-            //TODO Load profile
         }
 
     }

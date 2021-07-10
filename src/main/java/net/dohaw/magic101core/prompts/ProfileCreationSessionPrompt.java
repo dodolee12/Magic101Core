@@ -1,6 +1,7 @@
-package net.dohaw.magic101core.profiles;
+package net.dohaw.magic101core.prompts;
 
-import net.dohaw.magic101core.menus.ProfileCreationMenu;
+import net.dohaw.magic101core.menus.profile.ProfileCreationMenu;
+import net.dohaw.magic101core.profiles.ProfileCreationSession;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;

@@ -1,6 +1,6 @@
 package net.dohaw.magic101core.commands;
 
-import net.dohaw.magic101core.menus.ProfileSelectionMenu;
+import net.dohaw.magic101core.menus.profile.ProfileSelectionMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

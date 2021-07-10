@@ -1,9 +1,10 @@
-package net.dohaw.magic101core.menus;
+package net.dohaw.magic101core.menus.profile;
 
 import net.dohaw.corelib.JPUtils;
 import net.dohaw.corelib.StringUtils;
 import net.dohaw.corelib.menus.Menu;
 import net.dohaw.magic101core.profiles.*;
+import net.dohaw.magic101core.prompts.ProfileCreationSessionPrompt;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
 import net.dohaw.magic101core.utils.Constants;
 import org.bukkit.Material;

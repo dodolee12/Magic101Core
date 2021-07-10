@@ -33,6 +33,7 @@ public final class Magic101Core extends JavaPlugin {
 
         JPUtils.registerEvents(new EventListener(this));
         JPUtils.registerCommand("profile",new ProfileSelectCommand(this));
+        JPUtils.registerCommand("magic101", new Magic101Command(this));
     }
 
     @Override
@@ -155,16 +156,22 @@ public final class Magic101Core extends JavaPlugin {
                 profileConfig.set("logout-location", profile.getLogoutLocation());
                 profileConfig.set("offline-player", Bukkit.getOfflinePlayer(playerUUID));
 
-                for(int i = 0; i < profile.getEquippedArmor().length; ++i){
-                    profileConfig.set("armor." + i,profile.getEquippedArmor()[i]);
+                if(profile.getEquippedArmor() != null){
+                    for(int i = 0; i < profile.getEquippedArmor().length; ++i){
+                        profileConfig.set("armor." + i,profile.getEquippedArmor()[i]);
+                    }
                 }
 
-                for(int i = 0; i < profile.getStorageItems().length; ++i){
-                    profileConfig.set("storage." + i, profile.getStorageItems()[i]);
+                if(profile.getStorageItems() != null){
+                    for(int i = 0; i < profile.getStorageItems().length; ++i){
+                        profileConfig.set("storage." + i, profile.getStorageItems()[i]);
+                    }
                 }
 
-                for(int i = 0; i < profile.getExtraItems().length; ++i){
-                    profileConfig.set("extra." + i, profile.getExtraItems()[i]);
+                if(profile.getExtraItems() != null){
+                    for(int i = 0; i < profile.getExtraItems().length; ++i){
+                        profileConfig.set("extra." + i, profile.getExtraItems()[i]);
+                    }
                 }
 
                 try{
