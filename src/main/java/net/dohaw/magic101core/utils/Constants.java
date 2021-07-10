@@ -15,4 +15,14 @@ public final class Constants {
         put(Schools.FIRE,550);
         put(Schools.MYTH,700);
     }};
+
+    public static Map<Schools, String> schoolsToSpell = new HashMap<Schools,String>(){{
+        put(Schools.ICE,"Resist bubble");
+        put(Schools.LIFE,"Life bubble");
+        put(Schools.DEATH,"Pierce bubble");
+        put(Schools.BALANCE,"Critical Bubble");
+        put(Schools.STORM,"Damage bubble");
+        put(Schools.FIRE,"Fire Lingering AOE");
+        put(Schools.MYTH,"Minion");
+    }};
 }

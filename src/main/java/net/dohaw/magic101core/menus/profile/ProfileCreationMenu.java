@@ -1,9 +1,10 @@
-package net.dohaw.magic101core.menus;
+package net.dohaw.magic101core.menus.profile;
 
 import net.dohaw.corelib.JPUtils;
 import net.dohaw.corelib.StringUtils;
 import net.dohaw.corelib.menus.Menu;
 import net.dohaw.magic101core.profiles.*;
+import net.dohaw.magic101core.prompts.ProfileCreationSessionPrompt;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
 import net.dohaw.magic101core.utils.Constants;
 import org.bukkit.Material;
@@ -58,7 +59,7 @@ public class ProfileCreationMenu extends Menu implements Listener {
             inv.setItem(15, createGuiItem(Material.STICK, "&eChange Class", classNameLore));
         }
 
-        inv.setItem(31, createGuiItem(Material.STICK, create ? "&eCreate Profile" : "&eEdit Profile", new ArrayList<>()));
+        inv.setItem(31, createGuiItem(Material.STICK, create ? "&eCreate Profile" : "&eSave", new ArrayList<>()));
 
         this.fillerMat = Material.BLACK_STAINED_GLASS_PANE;
         fillMenu(false);
@@ -83,7 +84,7 @@ public class ProfileCreationMenu extends Menu implements Listener {
         if(e.getClickedInventory() == null) return;
         if(!e.getClickedInventory().equals(inv)) return;
         e.setCancelled(true);
-        if(clickedItem == null || clickedItem.getType().equals(Material.AIR)) return;
+        if(clickedItem == null || clickedItem.getType().equals(Material.AIR) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) return;
 
         //prof/char name select
         if(slotClicked == 11 || slotClicked == 13){
@@ -120,13 +121,24 @@ public class ProfileCreationMenu extends Menu implements Listener {
                     player.sendMessage("Please set a character name and a class.");
                     return;
                 }
+                if(ALL_PROFILES.getProfileByProfileName(playerUUID, session.getProfileName()) != null){
+                    player.sendMessage("Your profile name must be different from all other profiles.");
+                    return;
+                }
                 if(profileList == null){
                     profileList = new ArrayList<>();
                 }
-                profileList.add(new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(),
-                        new Stats(1,new Health(Constants.schoolToBaseHealth.get(session.getSchool()))),session,
-                        true));
+                Profile newProfile = new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(),
+                        1,new Health(Constants.schoolToBaseHealth.get(session.getSchool())),session,
+                        true);
+                profileList.add(newProfile);
+
+                Profile oldProfile = ALL_PROFILES.findActiveProfile(playerUUID);
+                if(oldProfile != null){
+                    oldProfile.saveProfile(player);
+                }
                 player.closeInventory();
+                newProfile.loadProfile(player);
                 player.sendMessage(StringUtils.colorString("&bYou have created your class"));
                 ALL_PROFILES.ALL_PROFILES_MAP.put(playerUUID,profileList);
             }

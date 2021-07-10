@@ -10,6 +10,15 @@ public class Health {
         this.currentHealth = maxHealth;
     }
 
+    public Health(int maxHealth, int currentHealth){
+        this.maxHealth = maxHealth;
+        this.currentHealth = currentHealth;
+    }
+
+    public static Health loadHealthFromConfig(int maxHealth, int currentHealth){
+        return new Health(maxHealth,currentHealth);
+    }
+
     public String toString(){
         return "" + maxHealth;
     }

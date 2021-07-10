@@ -7,5 +7,6 @@ public enum Schools {
     LIFE,
     BALANCE,
     MYTH,
-    STORM
+    STORM,
+    UNIVERSAL
 }

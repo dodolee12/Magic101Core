@@ -1,7 +1,9 @@
-package net.dohaw.magic101core.menus;
+package net.dohaw.magic101core.menus.items;
 
 import net.dohaw.corelib.JPUtils;
 import net.dohaw.corelib.menus.Menu;
+import net.dohaw.magic101core.items.ItemCreationSession;
+import net.dohaw.magic101core.menus.profile.ProfileCreationMenu;
 import net.dohaw.magic101core.profiles.ProfileCreationSession;
 import net.dohaw.magic101core.profiles.Schools;
 import org.bukkit.Material;
@@ -14,12 +16,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 
-public class ClassSelectionMenu extends Menu implements Listener {
+public class ItemClassMenu  extends Menu implements Listener {
+    private ItemCreationSession session;
+    private CreateItemMenu prevMenu;
 
-    private ProfileCreationSession session;
-    private ProfileCreationMenu prevMenu;
-
-    public ClassSelectionMenu(JavaPlugin plugin, ProfileCreationMenu previousMenu, ProfileCreationSession session) {
+    public ItemClassMenu(JavaPlugin plugin, CreateItemMenu previousMenu, ItemCreationSession session) {
         super(plugin, previousMenu, "Class Selection", 9);
         this.session = session;
         this.prevMenu = previousMenu;
@@ -28,7 +29,7 @@ public class ClassSelectionMenu extends Menu implements Listener {
 
     @Override
     public void initializeItems(Player player) {
-        int i = 1;
+        int i = 0;
         for(Schools school :Schools.values()){
             inv.setItem(i, createGuiItem(Material.STICK, school.toString(), new ArrayList<>()));
             ++i;
@@ -44,7 +45,7 @@ public class ClassSelectionMenu extends Menu implements Listener {
         if(e.getClickedInventory() == null) return;
         if(!e.getClickedInventory().equals(inv)) return;
         e.setCancelled(true);
-        if(clickedItem == null || clickedItem.getType().equals(Material.AIR)) return;
+        if(clickedItem == null || clickedItem.getType().equals(Material.AIR) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) return;
 
         Schools school = null;
         switch(clickedItem.getItemMeta().getDisplayName()){
@@ -69,7 +70,11 @@ public class ClassSelectionMenu extends Menu implements Listener {
             case "STORM":
                 school = Schools.STORM;
                 break;
+            case "UNIVERSAL":
+                school = Schools.UNIVERSAL;
+                break;
         }
+        session.setSpellName("None");
         session.setSchool(school);
         prevMenu.setSession(session);
         prevMenu.initializeItems(player);

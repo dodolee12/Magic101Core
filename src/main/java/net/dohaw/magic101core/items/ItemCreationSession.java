@@ -1,26 +1,85 @@
 package net.dohaw.magic101core.items;
 
-import javafx.scene.paint.Material;
-import org.bukkit.enchantments.Enchantment;
+import net.dohaw.magic101core.profiles.Schools;
+import net.dohaw.magic101core.spells.Spell;
+import org.bukkit.Material;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ItemCreationSession {
 
-    private String displayName;
-    private List<String> lore;
-    private Material material;
-    private boolean isUniversal;
-    private String spellBoundTo;
-    private String key;
-    private Map<Enchantment, Integer> enchants;
-    private
-
-    public ItemCreationSession(){}
-
-    public
+    private String key = "None";
+    private String displayName = "Not set";
+    private List<String> lore = new ArrayList<>();
+    private Material material = Material.APPLE;
+    private ItemProperties itemProperties = new ItemProperties();
+    private Schools school = null;
+    private String spellName = "None";
 
 
 
+
+    public ItemCreationSession(){
+    }
+
+    public CustomItem toCustomItem(){
+        return new CustomItem(key,displayName,lore,material,itemProperties,school,spellName);
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public List<String> getLore() {
+        return lore;
+    }
+
+    public void setLore(List<String> lore) {
+        this.lore = lore;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    public ItemProperties getItemProperties() {
+        return itemProperties;
+    }
+
+    public void setItemProperties(ItemProperties itemProperties) {
+        this.itemProperties = itemProperties;
+    }
+
+    public void setKey(String KEY) {
+        this.key = KEY;
+    }
+
+    public Schools getSchool() {
+        return school;
+    }
+
+    public void setSchool(Schools school) {
+        this.school = school;
+    }
+
+    public String getSpellName() {
+        return spellName;
+    }
+
+    public void setSpellName(String spellName) {
+        this.spellName = spellName;
+    }
 }
