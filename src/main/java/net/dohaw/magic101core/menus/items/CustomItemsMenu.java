@@ -2,6 +2,7 @@ package net.dohaw.magic101core.menus.items;
 
 import net.dohaw.corelib.menus.Menu;
 import net.dohaw.magic101core.items.ItemCreationSession;
+import net.dohaw.magic101core.utils.ALL_ITEMS;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -47,11 +48,11 @@ public class CustomItemsMenu extends Menu implements Listener {
         switch(slotClicked){
             //create new item
             case 20:
-                newMenu = new CreateItemMenu(plugin, new ItemCreationSession());
+                newMenu = new CreateItemMenu(plugin, this, new ItemCreationSession());
                 break;
             // edit item
             case 24:
-
+                newMenu = new DisplayItemsMenu(plugin, this, null, ALL_ITEMS.ALL_ITEMS_MAP.isEmpty() ? null : ALL_ITEMS.ALL_ITEMS_MAP.firstKey());
                 break;
         }
 

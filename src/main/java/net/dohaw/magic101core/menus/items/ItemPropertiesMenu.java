@@ -26,15 +26,12 @@ import java.util.Map;
 public class ItemPropertiesMenu extends Menu implements Listener {
 
     private ItemCreationSession session;
-    private CreateItemMenu prevMenu;
 
 
-    public ItemPropertiesMenu(JavaPlugin plugin, CreateItemMenu previousMenu, ItemCreationSession session) {
+    public ItemPropertiesMenu(JavaPlugin plugin, Menu previousMenu, ItemCreationSession session) {
         super(plugin, previousMenu, "Item Properties", 45);
         this.session = session;
         JPUtils.registerEvents(this);
-        this.prevMenu = previousMenu;
-
     }
 
     @Override
@@ -87,10 +84,14 @@ public class ItemPropertiesMenu extends Menu implements Listener {
         if(clickedItem == null || clickedItem.getType().equals(Material.AIR) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) return;
 
         if(slotClicked == (inv.getSize() - 1)){
-            prevMenu.setSession(session);
-            prevMenu.initializeItems(player);
+            if(previousMenu instanceof  CreateItemMenu){
+                ((CreateItemMenu) previousMenu).setSession(session);
+            }else if(previousMenu instanceof EditItemMenu){
+                ((EditItemMenu) previousMenu).setSession(session);
+            }
+            previousMenu.initializeItems(player);
             player.closeInventory();
-            prevMenu.openInventory(player);
+            previousMenu.openInventory(player);
             return;
         }
 

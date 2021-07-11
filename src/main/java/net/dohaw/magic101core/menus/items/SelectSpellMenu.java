@@ -21,7 +21,7 @@ public class SelectSpellMenu extends Menu implements Listener {
     private String spellName;
     private ItemCreationSession session;
 
-    public SelectSpellMenu(JavaPlugin plugin, CreateItemMenu prevMenu, Schools school, ItemCreationSession session){
+    public SelectSpellMenu(JavaPlugin plugin, Menu prevMenu, Schools school, ItemCreationSession session){
         super(plugin, prevMenu, "Select Spell", 9);
         this.school = school;
         this.spellName = Constants.schoolsToSpell.get(school);
@@ -60,7 +60,11 @@ public class SelectSpellMenu extends Menu implements Listener {
                 break;
         }
         session.setSpellName(spellname);
-        ((CreateItemMenu) previousMenu).setSession(session);
+        if(previousMenu instanceof  CreateItemMenu){
+            ((CreateItemMenu) previousMenu).setSession(session);
+        }else if(previousMenu instanceof EditItemMenu){
+            ((EditItemMenu) previousMenu).setSession(session);
+        }
         previousMenu.initializeItems(player);
         player.closeInventory();
         previousMenu.openInventory(player);

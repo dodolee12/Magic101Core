@@ -1,7 +1,6 @@
 package net.dohaw.magic101core.items;
 
 import net.dohaw.magic101core.profiles.Schools;
-import net.dohaw.magic101core.spells.Spell;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
@@ -17,10 +16,17 @@ public class ItemCreationSession {
     private Schools school = null;
     private String spellName = "None";
 
-
-
-
     public ItemCreationSession(){
+    }
+
+    public ItemCreationSession(CustomItem item){
+        key = item.getKEY();
+        displayName = item.getDisplayName();
+        lore = item.getLore();
+        material = item.getMaterial();
+        itemProperties = item.getItemProperties();
+        school = item.getSchool();
+        spellName = item.getSpellName();
     }
 
     public CustomItem toCustomItem(){

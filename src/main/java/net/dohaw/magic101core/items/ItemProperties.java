@@ -20,9 +20,9 @@ public class ItemProperties {
 
     public ItemProperties(){}
 
-    public ItemProperties(int level, int damage, int maxHealth, int pierce, int critChance, int stunChance,
-                          int defense, int lifesteal, int lingeringChance, int lingeringDamage,
-                          int outgoingHealing, int notice, int incomingHealing){
+    public ItemProperties(int level, int damage, int maxHealth, double pierce, double critChance, double stunChance,
+                          double defense, double lifesteal, double lingeringChance, int lingeringDamage,
+                          double outgoingHealing, double incomingHealing){
         this.level = level;
         this.damage = damage;
         this.maxHealth = maxHealth;
@@ -40,13 +40,13 @@ public class ItemProperties {
     //this looks really bad and im p sure theres better wyas to do it but idk how to in java
     public List<String> getPropLore() {
         return new ArrayList<String>() {{
-            DecimalFormat decimalFormat = new DecimalFormat("#.00");
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
             add("&cLevel: &e" + getLevel());
             if (getDamage() != 0) {
-                add("&cDamage: &e+" + decimalFormat.format(getDamage()));
+                add("&cDamage: &e+" + getDamage());
             }
             if (getMaxHealth() != 0) {
-                add("&cMax Health: &e+" + decimalFormat.format(getMaxHealth()));
+                add("&cMax Health: &e+" + getMaxHealth());
             }
             if(getPierce() != 0){
                 add("&cPierce: &e+" + decimalFormat.format(getPierce()) + "%");
@@ -61,13 +61,13 @@ public class ItemProperties {
                 add("&cDefense: &e+" + decimalFormat.format(getDefense()) + "%");
             }
             if(getLifesteal() != 0){
-                add("&cLifesteal: &e+" + decimalFormat.format((getLifesteal()) + "%"));
+                add("&cLifesteal: &e+" + decimalFormat.format(getLifesteal()) + "%");
             }
             if(getLingeringChance() != 0){
                 add("&cLingering Chance: &e+" + decimalFormat.format(getLingeringChance()) + "%");
             }
             if(getLingeringDamage() != 0){
-                add("&cLingering Damage: &e+" + decimalFormat.format(getLingeringDamage()));
+                add("&cLingering Damage: &e+" + getLingeringDamage());
             }
             if(getOutgoingHealing() != 0) {
                 add("&cOutgoing Healing: &e+" + decimalFormat.format(getOutgoingHealing()) + "%");

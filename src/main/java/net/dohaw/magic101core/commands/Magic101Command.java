@@ -1,4 +1,4 @@
-package net.dohaw.magic101core;
+package net.dohaw.magic101core.commands;
 
 import net.dohaw.magic101core.menus.items.CustomItemsMenu;
 import org.bukkit.command.Command;
@@ -30,11 +30,13 @@ public class Magic101Command implements CommandExecutor {
             Player pSender = (Player) sender;
             String firstArg = args[0];
             switch(firstArg){
-                case "itemcreate":
-                    itemCreationCommand(pSender);
-                    break;
 
                 case "customitems":
+                    if(!pSender.isOp()){
+                        pSender.sendMessage("You do not have the permissions for this command");
+                        return true;
+                    }
+
                     CustomItemsMenu customItemsMenu = new CustomItemsMenu(plugin);
                     customItemsMenu.initializeItems(pSender);
                     customItemsMenu.openInventory(pSender);
@@ -50,10 +52,5 @@ public class Magic101Command implements CommandExecutor {
 
     private void helpCommand(CommandSender sender){}
 
-    private void itemCreationCommand(Player sender){
-
-
-
-    }
 
 }

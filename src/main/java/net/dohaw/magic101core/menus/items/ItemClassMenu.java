@@ -18,12 +18,10 @@ import java.util.ArrayList;
 
 public class ItemClassMenu  extends Menu implements Listener {
     private ItemCreationSession session;
-    private CreateItemMenu prevMenu;
 
-    public ItemClassMenu(JavaPlugin plugin, CreateItemMenu previousMenu, ItemCreationSession session) {
+    public ItemClassMenu(JavaPlugin plugin, Menu previousMenu, ItemCreationSession session) {
         super(plugin, previousMenu, "Class Selection", 9);
         this.session = session;
-        this.prevMenu = previousMenu;
         JPUtils.registerEvents(this);
     }
 
@@ -76,10 +74,14 @@ public class ItemClassMenu  extends Menu implements Listener {
         }
         session.setSpellName("None");
         session.setSchool(school);
-        prevMenu.setSession(session);
-        prevMenu.initializeItems(player);
+        if(previousMenu instanceof  CreateItemMenu){
+            ((CreateItemMenu) previousMenu).setSession(session);
+        }else if(previousMenu instanceof EditItemMenu){
+            ((EditItemMenu) previousMenu).setSession(session);
+        }
+        previousMenu.initializeItems(player);
         player.closeInventory();
-        prevMenu.openInventory(player);
+        previousMenu.openInventory(player);
 
     }
 }

@@ -2,12 +2,14 @@ package net.dohaw.magic101core.menus.items;
 
 import net.dohaw.corelib.JPUtils;
 import net.dohaw.corelib.menus.Menu;
+import net.dohaw.magic101core.items.CustomItem;
 import net.dohaw.magic101core.items.ItemCreationSession;
-import net.dohaw.magic101core.profiles.Schools;
-import net.dohaw.magic101core.prompts.ItemCreationSessionPrompt;
 import net.dohaw.magic101core.items.ItemProperties;
 import net.dohaw.magic101core.menus.items.lore.ViewLoreMenu;
+import net.dohaw.magic101core.profiles.Schools;
+import net.dohaw.magic101core.prompts.ItemCreationSessionPrompt;
 import net.dohaw.magic101core.utils.ALL_ITEMS;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
@@ -21,25 +23,26 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateItemMenu extends Menu implements Listener {
-
+public class EditItemMenu extends Menu implements Listener {
 
     private ItemCreationSession session;
 
-    public CreateItemMenu(JavaPlugin plugin, Menu prevMenu, ItemCreationSession session) {
-        super(plugin, prevMenu, "Create Item", 54);
+    public EditItemMenu(JavaPlugin plugin, Menu previousMenu, CustomItem customItem) {
+        super(plugin, previousMenu, "Edit Item", 54);
+        this.session = new ItemCreationSession(customItem);
         JPUtils.registerEvents(this);
-        this.session = session;
     }
 
+
+
     @Override
-    public void initializeItems(Player p) {
+    public void initializeItems(Player player) {
         Material sessionMat = session.getMaterial();
         String sessionDisplayName = session.getDisplayName();
-        String sessionKey = session.getKey();
         ItemProperties sessionProps = session.getItemProperties();
         String sessionSchoolName = session.getSchool() != null ? session.getSchool().toString() : "Not Selected";
         String sessionSpellName = session.getSpellName();
+
 
 
         /*
@@ -54,14 +57,6 @@ public class CreateItemMenu extends Menu implements Listener {
             add("&cCurrent Display Name: &e" + sessionDisplayName);
         }};
         inv.setItem(12, createGuiItem(Material.PAPER, "&eChange Display Name", displayNameLore));
-
-        /*
-            Change Key
-         */
-        List<String> keyLore = new ArrayList<String>(){{
-            add("&cCurrent Key: &e" + sessionKey);
-        }};
-        inv.setItem(14, createGuiItem(Material.TRIPWIRE_HOOK, "&eChange Key", keyLore));
 
         /*
             Change Properties
@@ -98,19 +93,18 @@ public class CreateItemMenu extends Menu implements Listener {
 
         inv.setItem(32, createGuiItem(Material.WRITABLE_BOOK, "&eChange Spell", spellLore));
 
-        //Abort button
-        inv.setItem(inv.getSize() - 9, createGuiItem(Material.BARRIER, "&cAbort Creation", new ArrayList<>()));
-
         //Done button
-        inv.setItem(inv.getSize() - 5, createGuiItem(Material.EMERALD_BLOCK, "&aCreate Item", new ArrayList<>()));
+        inv.setItem(inv.getSize() - 5, createGuiItem(Material.EMERALD_BLOCK, "&eEdit Item", new ArrayList<>()));
+
+        inv.setItem(inv.getSize() - 1, createGuiItem(session.getMaterial(), "&eGet Item", new ArrayList<>()));
 
         setFillerMaterial(Material.BLACK_STAINED_GLASS_PANE);
-        setBackMaterial(Material.ARROW);
-        fillMenu(true);
+        fillMenu(false);
+
     }
 
-    @EventHandler
     @Override
+    @EventHandler
     protected void onInventoryClick(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
         int slotClicked = e.getSlot();
@@ -121,18 +115,16 @@ public class CreateItemMenu extends Menu implements Listener {
         e.setCancelled(true);
         if(clickedItem == null || clickedItem.getType().equals(Material.AIR) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) return;
 
-        int abortCreationSlot = inv.getSize() - 9;
-        int createItemSlot = inv.getSize() - 5;
+        int editItemSlot = inv.getSize() - 5;
+        int addItemSlot = inv.getSize() - 1;
 
         if(slotClicked == 10 || slotClicked == 12 || slotClicked == 14){
 
             ItemCreationSessionPrompt.Change change;
             if(slotClicked == 10){
                 change = ItemCreationSessionPrompt.Change.MATERIAL;
-            }else if(slotClicked == 12){
-                change = ItemCreationSessionPrompt.Change.DISPLAY_NAME;
             }else{
-                change = ItemCreationSessionPrompt.Change.KEY;
+                change = ItemCreationSessionPrompt.Change.DISPLAY_NAME;
             }
 
 
@@ -177,28 +169,19 @@ public class CreateItemMenu extends Menu implements Listener {
             player.closeInventory();
             newMenu.openInventory(player);
 
-        }else if(slotClicked == abortCreationSlot){
-            player.sendMessage("The item creation session has been aborted!");
-            player.closeInventory();
-        }else if(slotClicked == createItemSlot){
-            //create item\
-            if(session.getKey().equals("None")){
-                player.sendMessage("You must set a key for this item.");
-                return;
-            }
-            if(session.getDisplayName().equals("Not set")){
-                player.sendMessage("You must set a display name for this item.");
-            }
-            if(session.getSchool() == null){
-                session.setSchool(Schools.UNIVERSAL);
-            }
-
+        }else if(slotClicked == editItemSlot){
+            //edit item\
             ALL_ITEMS.ALL_ITEMS_MAP.put(session.getKey(), session.toCustomItem());
-            player.sendMessage("Item has been created successfully");
-            player.closeInventory();
+            player.sendMessage("Item has been edited successfully");
 
-        }else if(slotClicked == (inv.getSize() - 1)){
-            goToPreviousMenu(player);
+            previousMenu.initializeItems(player);
+            player.closeInventory();
+            previousMenu.openInventory(player);
+
+        }
+        else if(slotClicked == addItemSlot){
+            player.getInventory().addItem(ALL_ITEMS.ALL_ITEMS_MAP.get(session.getKey()).toItemStack());
+
         }
     }
 
@@ -209,4 +192,6 @@ public class CreateItemMenu extends Menu implements Listener {
     public void setSession(ItemCreationSession session) {
         this.session = session;
     }
+
+
 }

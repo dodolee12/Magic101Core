@@ -4,6 +4,7 @@ import net.dohaw.corelib.menus.Menu;
 import net.dohaw.magic101core.items.ItemCreationSession;
 import net.dohaw.magic101core.menus.items.CreateItemMenu;
 import net.dohaw.magic101core.menus.items.DisplayItemsMenu;
+import net.dohaw.magic101core.menus.items.EditItemMenu;
 import net.dohaw.magic101core.menus.items.lore.EditLoreMenu;
 import net.dohaw.magic101core.menus.items.lore.ViewLoreMenu;
 import net.dohaw.magic101core.utils.ALL_ITEMS;
@@ -129,8 +130,11 @@ public class ItemCreationSessionPrompt extends StringPrompt {
             }
         }
 
-
-        ((CreateItemMenu) previousMenu).setSession(session);
+        if(previousMenu instanceof  CreateItemMenu){
+            ((CreateItemMenu) previousMenu).setSession(session);
+        }else if(previousMenu instanceof EditItemMenu){
+            ((EditItemMenu) previousMenu).setSession(session);
+        }
 
         previousMenu.clearItems();
         previousMenu.initializeItems(player);
