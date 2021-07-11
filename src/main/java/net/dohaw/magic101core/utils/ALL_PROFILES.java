@@ -5,6 +5,9 @@ import net.dohaw.magic101core.profiles.Profile;
 import java.util.*;
 
 public final class ALL_PROFILES {
+
+    public static Set<UUID> PROFILES_IN_SELECTION = new HashSet<>();
+
     public static Map<UUID,List<Profile>> ALL_PROFILES_MAP = new HashMap<>();
 
     public static Profile getProfileByProfileName(UUID playerUUID, String profileName){

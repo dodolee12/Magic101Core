@@ -1,5 +1,7 @@
 package net.dohaw.magic101core.profiles;
 
+import net.dohaw.magic101core.utils.ALL_ITEMS;
+import net.dohaw.magic101core.utils.ALL_PROFILES;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
@@ -76,7 +78,6 @@ public class Profile {
         player.getInventory().setStorageContents(storageItems);
         player.getInventory().setExtraContents(extraItems);
         player.teleport(logoutLocation);
-
     }
 
     public ProfileCreationSession getSession() {

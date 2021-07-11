@@ -2,6 +2,7 @@ package net.dohaw.magic101core.prompts;
 
 import net.dohaw.magic101core.menus.profile.ProfileCreationMenu;
 import net.dohaw.magic101core.profiles.ProfileCreationSession;
+import net.dohaw.magic101core.utils.ALL_PROFILES;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -53,6 +54,7 @@ public class ProfileCreationSessionPrompt extends StringPrompt {
         prevMenu.clearItems();
         prevMenu.initializeItems(player);
         prevMenu.openInventory(player);
+        ALL_PROFILES.PROFILES_IN_SELECTION.add(player.getUniqueId());
 
         return END_OF_CONVERSATION;
     }

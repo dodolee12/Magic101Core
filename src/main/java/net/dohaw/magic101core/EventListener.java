@@ -29,18 +29,20 @@ public class EventListener implements Listener {
         ProfileSelectionMenu profileSelectionMenu = new ProfileSelectionMenu(plugin);
         profileSelectionMenu.initializeItems(player);
         profileSelectionMenu.openInventory(player);
+        ALL_PROFILES.PROFILES_IN_SELECTION.add(player.getUniqueId());
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e){
         Player player = (Player) e.getPlayer();
-//        if(e.getView().getTitle().equals("Profile Selection") && !ALL_PROFILES.ALL_PROFILES_MAP.containsKey(player.getUniqueId())){
-//            Bukkit.getScheduler().runTask(plugin, () -> {
-//                ProfileSelectionMenu profileSelectionMenu = new ProfileSelectionMenu(plugin);
-//                profileSelectionMenu.initializeItems(player);
-//                profileSelectionMenu.openInventory(player);
-//            });
-//        }
+        if(ALL_PROFILES.PROFILES_IN_SELECTION.contains(player.getUniqueId())){
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                player.sendMessage("You have tried to exit profile creation. You have been redirected to the profile selection screen.");
+                ProfileSelectionMenu profileSelectionMenu = new ProfileSelectionMenu(plugin);
+                profileSelectionMenu.initializeItems(player);
+                profileSelectionMenu.openInventory(player);
+            });
+        }
     }
 
     @EventHandler

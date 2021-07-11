@@ -88,6 +88,8 @@ public class ProfileCreationMenu extends Menu implements Listener {
 
         //prof/char name select
         if(slotClicked == 11 || slotClicked == 13){
+            ALL_PROFILES.PROFILES_IN_SELECTION.remove(player.getUniqueId());
+
             ProfileCreationSessionPrompt.Change change = null;
             switch(slotClicked){
                 case 11:
@@ -107,13 +109,18 @@ public class ProfileCreationMenu extends Menu implements Listener {
         }
         //class selection
         else if(slotClicked == 15 && create) {
+            ALL_PROFILES.PROFILES_IN_SELECTION.remove(player.getUniqueId());
+
             Menu newMenu = new ClassSelectionMenu(plugin,this, session);
             newMenu.initializeItems(player);
             player.closeInventory();
             newMenu.openInventory(player);
+
+            ALL_PROFILES.PROFILES_IN_SELECTION.add(player.getUniqueId());
         }
         //create
         else if(slotClicked == 31){
+            ALL_PROFILES.PROFILES_IN_SELECTION.remove(player.getUniqueId());
             UUID playerUUID = player.getUniqueId();
             List<Profile> profileList = ALL_PROFILES.ALL_PROFILES_MAP.get(playerUUID);
             if(create){
@@ -137,10 +144,10 @@ public class ProfileCreationMenu extends Menu implements Listener {
                 if(oldProfile != null){
                     oldProfile.saveProfile(player);
                 }
-                player.closeInventory();
                 newProfile.loadProfile(player);
                 player.sendMessage(StringUtils.colorString("&bYou have created your class"));
                 ALL_PROFILES.ALL_PROFILES_MAP.put(playerUUID,profileList);
+                player.closeInventory();
             }
             else{
                 Profile profile = ALL_PROFILES.ALL_PROFILES_MAP.get(playerUUID).get(this.slotClicked);
@@ -151,7 +158,10 @@ public class ProfileCreationMenu extends Menu implements Listener {
                 player.closeInventory();
                 prevMenu.openInventory(player);
             }
+            ALL_PROFILES.PROFILES_IN_SELECTION.add(player.getUniqueId());
+
         }
+
 
     }
 }

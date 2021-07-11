@@ -4,6 +4,7 @@ import net.dohaw.corelib.JPUtils;
 import net.dohaw.corelib.menus.Menu;
 import net.dohaw.magic101core.profiles.ProfileCreationSession;
 import net.dohaw.magic101core.profiles.Schools;
+import net.dohaw.magic101core.utils.ALL_PROFILES;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,6 +49,7 @@ public class ClassSelectionMenu extends Menu implements Listener {
         if(!e.getClickedInventory().equals(inv)) return;
         e.setCancelled(true);
         if(clickedItem == null || clickedItem.getType().equals(Material.AIR) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) return;
+        ALL_PROFILES.PROFILES_IN_SELECTION.remove(player.getUniqueId());
 
         Schools school = null;
         switch(clickedItem.getItemMeta().getDisplayName()){
@@ -78,6 +80,7 @@ public class ClassSelectionMenu extends Menu implements Listener {
         prevMenu.initializeItems(player);
         player.closeInventory();
         prevMenu.openInventory(player);
+        ALL_PROFILES.PROFILES_IN_SELECTION.add(player.getUniqueId());
 
     }
 }
