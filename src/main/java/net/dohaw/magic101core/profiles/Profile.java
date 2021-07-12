@@ -2,12 +2,14 @@ package net.dohaw.magic101core.profiles;
 
 import net.dohaw.magic101core.utils.ALL_ITEMS;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
+import net.dohaw.magic101core.utils.DisplayHealthUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +80,7 @@ public class Profile {
         player.getInventory().setStorageContents(storageItems);
         player.getInventory().setExtraContents(extraItems);
         player.teleport(logoutLocation);
+        DisplayHealthUtil.updateHealth(this, player);
     }
 
     public ProfileCreationSession getSession() {
@@ -167,13 +170,6 @@ public class Profile {
     public void setExtraItems(ItemStack[] extraItems) {
         this.extraItems = extraItems;
     }
+
+
 }
-/*
-	Profile name
-	Character name
-	Class/school
-	Stats
-	Items
-	Last logout location
-	IsActive (is the player currently playing it right now)
- */

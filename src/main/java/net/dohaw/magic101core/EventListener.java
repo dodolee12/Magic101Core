@@ -3,15 +3,15 @@ package net.dohaw.magic101core;
 import net.dohaw.magic101core.menus.profile.ProfileSelectionMenu;
 import net.dohaw.magic101core.profiles.Profile;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
+import net.dohaw.magic101core.utils.DisplayHealthUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class EventListener implements Listener {
@@ -53,5 +53,10 @@ public class EventListener implements Listener {
             return;
         }
         profile.saveProfile(player);
+    }
+
+    @EventHandler
+    public void gainXP(PlayerExpChangeEvent e){
+        e.setAmount(0);
     }
 }

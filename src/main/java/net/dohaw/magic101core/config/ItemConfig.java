@@ -2,7 +2,6 @@ package net.dohaw.magic101core.config;
 
 import net.dohaw.magic101core.items.CustomItem;
 import net.dohaw.magic101core.utils.ALL_ITEMS;
-import net.dohaw.magic101core.utils.FileUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -33,7 +32,7 @@ public class ItemConfig {
     }
 
     public void saveConfig(){
-        FileUtils.deleteDirectoryFully(tempFolder);
+        deleteDirectoryFully(tempFolder);
         tempFolder.mkdirs();
         for(String key: ALL_ITEMS.ALL_ITEMS_MAP.keySet()){
 
@@ -59,7 +58,7 @@ public class ItemConfig {
                 e.printStackTrace();
             }
         }
-        FileUtils.deleteDirectoryFully(itemFolder);
+        deleteDirectoryFully(itemFolder);
         tempFolder.renameTo(itemFolder);
     }
 
@@ -78,5 +77,17 @@ public class ItemConfig {
         }
     }
 
-
+    private boolean deleteDirectoryFully(File dir){
+        if(dir.exists()){
+            for(File file: dir.listFiles()){
+                if (file.isDirectory()) {
+                    deleteDirectoryFully(file);
+                }
+                else{
+                    file.delete();
+                }
+            }
+        }
+        return dir.delete();
+    }
 }

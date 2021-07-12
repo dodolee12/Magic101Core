@@ -3,7 +3,6 @@ package net.dohaw.magic101core.config;
 import net.dohaw.magic101core.profiles.Profile;
 import net.dohaw.magic101core.profiles.Schools;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
-import net.dohaw.magic101core.utils.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -105,7 +104,7 @@ public class ProfileConfig {
     }
 
     public void saveConfig(){
-        FileUtils.deleteDirectoryFully(tempFolder);
+        deleteDirectoryFully(tempFolder);
         tempFolder.mkdirs();
         for(UUID playerUUID: ALL_PROFILES.ALL_PROFILES_MAP.keySet()){
             File playerFolder = new File(tempFolder,playerUUID.toString() + "/");
@@ -160,8 +159,22 @@ public class ProfileConfig {
                 }
             }
         }
-        FileUtils.deleteDirectoryFully(profileFolder);
+        deleteDirectoryFully(profileFolder);
         tempFolder.renameTo(profileFolder);
+    }
+
+    private boolean deleteDirectoryFully(File dir){
+        if(dir.exists()){
+            for(File file: dir.listFiles()){
+                if (file.isDirectory()) {
+                    deleteDirectoryFully(file);
+                }
+                else{
+                    file.delete();
+                }
+            }
+        }
+        return dir.delete();
     }
 
 }
