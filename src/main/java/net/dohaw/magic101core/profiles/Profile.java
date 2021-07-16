@@ -3,6 +3,7 @@ package net.dohaw.magic101core.profiles;
 import net.dohaw.magic101core.utils.ALL_ITEMS;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
 import net.dohaw.magic101core.utils.DisplayHealthUtil;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
@@ -12,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Profile {
@@ -76,7 +79,10 @@ public class Profile {
 
     public void loadProfile(Player player){
         setActive(true);
-        player.getEquipment().setArmorContents(equippedArmor);
+        if(equippedArmor != null){
+            ItemStack[] reversedArmorList = Arrays.copyOf(equippedArmor,equippedArmor.length);
+            player.getEquipment().setArmorContents(reversedArmorList);
+        }
         player.getInventory().setStorageContents(storageItems);
         player.getInventory().setExtraContents(extraItems);
         player.teleport(logoutLocation);

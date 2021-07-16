@@ -24,7 +24,7 @@ public class SelectSpellMenu extends Menu implements Listener {
     public SelectSpellMenu(JavaPlugin plugin, Menu prevMenu, Schools school, ItemCreationSession session){
         super(plugin, prevMenu, "Select Spell", 9);
         this.school = school;
-        this.spellName = Constants.schoolsToSpell.get(school);
+        this.spellName = Constants.schoolsToSpellName.get(school);
         this.session = session;
         JPUtils.registerEvents(this);
     }

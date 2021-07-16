@@ -157,8 +157,8 @@ public class ProfileCreationMenu extends Menu implements Listener {
                 prevMenu.initializeItems(player);
                 player.closeInventory();
                 prevMenu.openInventory(player);
+                ALL_PROFILES.PROFILES_IN_SELECTION.add(player.getUniqueId());
             }
-            ALL_PROFILES.PROFILES_IN_SELECTION.add(player.getUniqueId());
 
         }
 

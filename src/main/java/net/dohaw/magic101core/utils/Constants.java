@@ -1,6 +1,11 @@
 package net.dohaw.magic101core.utils;
 
+import net.dohaw.magic101core.items.ItemProperties;
 import net.dohaw.magic101core.profiles.Schools;
+import net.dohaw.magic101core.spells.LifeBubbleSpell;
+import net.dohaw.magic101core.spells.Spell;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +21,7 @@ public final class Constants {
         put(Schools.MYTH,700);
     }};
 
-    public static Map<Schools, String> schoolsToSpell = new HashMap<Schools,String>(){{
+    public static Map<Schools, String> schoolsToSpellName = new HashMap<Schools,String>(){{
         put(Schools.ICE,"Resist bubble");
         put(Schools.LIFE,"Life bubble");
         put(Schools.DEATH,"Pierce bubble");
@@ -25,4 +30,13 @@ public final class Constants {
         put(Schools.FIRE,"Fire Lingering AOE");
         put(Schools.MYTH,"Minion");
     }};
+
+    public static Spell getSpellFromName(String spellName, Location location, ItemProperties itemProperties, Player player){
+        switch (spellName){
+            case "Life bubble":
+                return new LifeBubbleSpell(location, player, itemProperties.getOutgoingHealing());
+        }
+        return null;
+    }
 }
+

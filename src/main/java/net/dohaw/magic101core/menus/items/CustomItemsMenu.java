@@ -63,4 +63,8 @@ public class CustomItemsMenu extends Menu implements Listener {
         }
 
     }
+
+    public Menu getPreviousMenu(){
+        return previousMenu;
+    }
 }

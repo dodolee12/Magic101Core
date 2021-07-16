@@ -21,9 +21,9 @@ public class DisplayItemsMenu extends Menu implements Listener {
     private final Material LAST_PAGE_MAT = Material.LEVER;
     private final Material BACK_MAT = Material.ARROW;
 
-    String currentKey;
-    List<CustomItem> customItems;
-    DisplayItemsMenu backPageMenu;
+    private String currentKey;
+    private List<CustomItem> customItems;
+    private DisplayItemsMenu backPageMenu;
 
 
     public DisplayItemsMenu(JavaPlugin plugin, Menu customItemMenu, DisplayItemsMenu backPageMenu, String startKey) {
@@ -114,5 +114,9 @@ public class DisplayItemsMenu extends Menu implements Listener {
         newMenu.openInventory(player);
 
 
+    }
+
+    public Menu getPreviousMenu(){
+        return previousMenu;
     }
 }

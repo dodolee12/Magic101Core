@@ -174,6 +174,10 @@ public class EditItemMenu extends Menu implements Listener {
             ALL_ITEMS.ALL_ITEMS_MAP.put(session.getKey(), session.toCustomItem());
             player.sendMessage("Item has been edited successfully");
 
+            Menu customItemsMenu = ((DisplayItemsMenu) previousMenu).getPreviousMenu();
+
+            previousMenu = new DisplayItemsMenu(plugin, customItemsMenu, null, ALL_ITEMS.ALL_ITEMS_MAP.isEmpty() ? null : ALL_ITEMS.ALL_ITEMS_MAP.firstKey());
+
             previousMenu.initializeItems(player);
             player.closeInventory();
             previousMenu.openInventory(player);

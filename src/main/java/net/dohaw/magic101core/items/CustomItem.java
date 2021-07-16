@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomItem {
@@ -37,7 +38,7 @@ public class CustomItem {
         this.school = Schools.valueOf(pdc.get(NamespacedKey.minecraft("school"), PersistentDataType.STRING));
         this.spellName = pdc.get(NamespacedKey.minecraft("spell-name"), PersistentDataType.STRING);
         this.displayName = itemStack.getItemMeta().getDisplayName();
-        this.lore = itemStack.getItemMeta().getLore();
+        this.lore = itemStack.getItemMeta().getLore() == null ? new ArrayList<String>() : itemStack.getItemMeta().getLore();
         this.material = itemStack.getType();
 
         int level = pdc.get(NamespacedKey.minecraft("level"), PersistentDataType.INTEGER);
@@ -59,6 +60,10 @@ public class CustomItem {
     public ItemStack toItemStack(){
         String itemDisplayname = StringUtils.colorString(displayName);
         List<String> itemlore = StringUtils.colorLore(lore);
+        String coloredString = StringUtils.colorString("&cONLY EQUIPPABLE BY " + school.toString());
+        if(lore.size() == 0 || !lore.get(lore.size() - 1).equals(coloredString)){
+            itemlore.add(coloredString);
+        }
         ItemStack item;
         item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();

@@ -19,6 +19,13 @@ public class Health {
         return new Health(maxHealth,currentHealth);
     }
 
+    public void heal(int amount){
+        currentHealth += amount;
+        if(currentHealth > maxHealth){
+            currentHealth = maxHealth;
+        }
+    }
+
     public String toString(){
         return "" + maxHealth;
     }
