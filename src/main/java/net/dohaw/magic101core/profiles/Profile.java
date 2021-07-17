@@ -12,10 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Profile {
 
@@ -30,6 +27,7 @@ public class Profile {
     private ItemStack[] storageItems;
     private ItemStack[] extraItems;
     private Location logoutLocation;
+    private Map<String, Double> inGameBuffsMap = new HashMap<>();
 
 
     public Profile(String profileName, String characterName, Schools school, int level, Health health, ProfileCreationSession session, boolean active){
@@ -77,10 +75,10 @@ public class Profile {
         player.getInventory().clear();
     }
 
-    public void loadProfile(Player player){
+    public void loadProfile(Player player) {
         setActive(true);
-        if(equippedArmor != null){
-            ItemStack[] reversedArmorList = Arrays.copyOf(equippedArmor,equippedArmor.length);
+        if (equippedArmor != null) {
+            ItemStack[] reversedArmorList = Arrays.copyOf(equippedArmor, equippedArmor.length);
             player.getEquipment().setArmorContents(reversedArmorList);
         }
         player.getInventory().setStorageContents(storageItems);
@@ -177,5 +175,14 @@ public class Profile {
         this.extraItems = extraItems;
     }
 
+    public void addBuff(String buff, double amount){
+        inGameBuffsMap.put(buff,inGameBuffsMap.getOrDefault(buff,0D) + amount);
+    }
+    public void removeBuff(String buff, double amount){
+        inGameBuffsMap.put(buff,inGameBuffsMap.getOrDefault(buff,0D) - amount);
+    }
 
+    public double getBuff(String buff){
+        return inGameBuffsMap.getOrDefault(buff,0D);
+    }
 }

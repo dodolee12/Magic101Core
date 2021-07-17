@@ -93,6 +93,9 @@ public class EditItemMenu extends Menu implements Listener {
 
         inv.setItem(32, createGuiItem(Material.WRITABLE_BOOK, "&eChange Spell", spellLore));
 
+        //back buttonr
+        inv.setItem(inv.getSize() - 9, createGuiItem(Material.BARRIER, "&eDelete Item", new ArrayList<>()));
+
         //Done button
         inv.setItem(inv.getSize() - 5, createGuiItem(Material.EMERALD_BLOCK, "&eEdit Item", new ArrayList<>()));
 
@@ -117,6 +120,7 @@ public class EditItemMenu extends Menu implements Listener {
 
         int editItemSlot = inv.getSize() - 5;
         int addItemSlot = inv.getSize() - 1;
+        int deleteItemSlot = inv.getSize() - 9;
 
         if(slotClicked == 10 || slotClicked == 12 || slotClicked == 14){
 
@@ -185,7 +189,18 @@ public class EditItemMenu extends Menu implements Listener {
         }
         else if(slotClicked == addItemSlot){
             player.getInventory().addItem(ALL_ITEMS.ALL_ITEMS_MAP.get(session.getKey()).toItemStack());
+        }
+        else if(slotClicked == deleteItemSlot){
+            ALL_ITEMS.ALL_ITEMS_MAP.remove(session.getKey());
+            player.sendMessage("Item has been deleted successfully");
 
+            Menu customItemsMenu = ((DisplayItemsMenu) previousMenu).getPreviousMenu();
+
+            previousMenu = new DisplayItemsMenu(plugin, customItemsMenu, null, ALL_ITEMS.ALL_ITEMS_MAP.isEmpty() ? null : ALL_ITEMS.ALL_ITEMS_MAP.firstKey());
+
+            previousMenu.initializeItems(player);
+            player.closeInventory();
+            previousMenu.openInventory(player);
         }
     }
 

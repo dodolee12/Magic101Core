@@ -4,6 +4,7 @@ import net.dohaw.corelib.StringUtils;
 import net.dohaw.magic101core.profiles.Schools;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -36,9 +37,9 @@ public class CustomItem {
         PersistentDataContainer pdc = itemStack.getItemMeta().getPersistentDataContainer();
         KEY = pdc.get(NamespacedKey.minecraft("key"), PersistentDataType.STRING);
         this.school = Schools.valueOf(pdc.get(NamespacedKey.minecraft("school"), PersistentDataType.STRING));
-        this.spellName = pdc.get(NamespacedKey.minecraft("spell-name"), PersistentDataType.STRING);
+        String spellName = pdc.get(NamespacedKey.minecraft("spell-name"), PersistentDataType.STRING);
+        this.spellName = spellName;
         this.displayName = itemStack.getItemMeta().getDisplayName();
-        this.lore = itemStack.getItemMeta().getLore() == null ? new ArrayList<String>() : itemStack.getItemMeta().getLore();
         this.material = itemStack.getType();
 
         int level = pdc.get(NamespacedKey.minecraft("level"), PersistentDataType.INTEGER);
@@ -50,20 +51,48 @@ public class CustomItem {
         double defense = pdc.get(NamespacedKey.minecraft("defense"), PersistentDataType.DOUBLE);
         double lifesteal = pdc.get(NamespacedKey.minecraft("lifesteal"), PersistentDataType.DOUBLE);
         double lingeringChance = pdc.get(NamespacedKey.minecraft("lingering-chance"), PersistentDataType.DOUBLE);
-        int lingeringDamage = pdc.get(NamespacedKey.minecraft("lingering-damage"), PersistentDataType.INTEGER);
+        double lingeringDamage = pdc.get(NamespacedKey.minecraft("lingering-damage"), PersistentDataType.DOUBLE);
         double outgoingHealing = pdc.get(NamespacedKey.minecraft("outgoing-healing"), PersistentDataType.DOUBLE);
         double incomingHealing = pdc.get(NamespacedKey.minecraft("incoming-healing"), PersistentDataType.DOUBLE);
-        this.itemProperties = new ItemProperties(level, damage, maxHealth, pierce, critChance, stunChance,
+        ItemProperties itemProperties = new ItemProperties(level, damage, maxHealth, pierce, critChance, stunChance,
                 defense, lifesteal, lingeringChance, lingeringDamage, outgoingHealing, incomingHealing);
+        this.itemProperties = itemProperties;
+        this.lore = getTrueLore(itemStack.getItemMeta().getLore(), itemProperties, spellName);
+
+    }
+
+    public static boolean canCreateCustomItem(ItemStack item){
+        PersistentDataContainer pdc = item.getItemMeta().getPersistentDataContainer();
+        return pdc.has(NamespacedKey.minecraft("key"), PersistentDataType.STRING);
+    }
+
+    private List<String> getTrueLore(List<String> lore, ItemProperties itemProperties, String spellName){
+        if(lore == null){
+            return new ArrayList<>();
+        }
+        int propLoreSize = itemProperties.getPropLore().size();
+        int unneccesaryLoreSize = spellName.equals("None") ? propLoreSize + 1 : propLoreSize + 2;
+        lore.subList(lore.size() - unneccesaryLoreSize, lore.size()).clear();
+        return lore;
+
     }
 
     public ItemStack toItemStack(){
         String itemDisplayname = StringUtils.colorString(displayName);
-        List<String> itemlore = StringUtils.colorLore(lore);
-        String coloredString = StringUtils.colorString("&cONLY EQUIPPABLE BY " + school.toString());
-        if(lore.size() == 0 || !lore.get(lore.size() - 1).equals(coloredString)){
-            itemlore.add(coloredString);
+        List<String> itemlore = new ArrayList<>(lore);
+        String classMessage = school == Schools.UNIVERSAL ? "&cUNIVERSAL ITEM" : "&cONLY EQUIPPABLE BY " + school.toString() + " CLASS";
+        String spellMessage = "&cThis item can use " + spellName;
+
+        itemlore.addAll(itemProperties.getPropLore());
+
+        if(!spellName.equals("None")){
+            itemlore.add(spellMessage);
         }
+
+        itemlore.add(classMessage);
+
+        itemlore = StringUtils.colorLore(itemlore);
+
         ItemStack item;
         item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
@@ -97,7 +126,7 @@ public class CustomItem {
         pdc.set(NamespacedKey.minecraft("defense"), PersistentDataType.DOUBLE, itemProperties.getDefense());
         pdc.set(NamespacedKey.minecraft("lifesteal"), PersistentDataType.DOUBLE, itemProperties.getLifesteal());
         pdc.set(NamespacedKey.minecraft("lingering-chance"), PersistentDataType.DOUBLE, itemProperties.getLingeringChance());
-        pdc.set(NamespacedKey.minecraft("lingering-damage"), PersistentDataType.INTEGER, itemProperties.getLingeringDamage());
+        pdc.set(NamespacedKey.minecraft("lingering-damage"), PersistentDataType.DOUBLE, itemProperties.getLingeringDamage());
         pdc.set(NamespacedKey.minecraft("outgoing-healing"), PersistentDataType.DOUBLE, itemProperties.getOutgoingHealing());
         pdc.set(NamespacedKey.minecraft("incoming-healing"), PersistentDataType.DOUBLE, itemProperties.getIncomingHealing());
 

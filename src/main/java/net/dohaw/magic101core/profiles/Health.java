@@ -19,11 +19,27 @@ public class Health {
         return new Health(maxHealth,currentHealth);
     }
 
+    public void healToFull(){
+        currentHealth = maxHealth;
+    }
+
     public void heal(int amount){
         currentHealth += amount;
         if(currentHealth > maxHealth){
             currentHealth = maxHealth;
         }
+    }
+
+    //returns true if dead
+    public void damage(int amount){
+        currentHealth -= amount;
+        if(currentHealth < 0){
+            currentHealth = 0;
+        }
+    }
+
+    public boolean isDead(){
+        return currentHealth == 0;
     }
 
     public String toString(){

@@ -47,7 +47,7 @@ public class ItemPropertiesMenu extends Menu implements Listener {
         setItem(23,Material.PAPER, "Defense", sessionProperties.getDefense(), true, true);
         setItem(25,Material.PAPER, "Lifesteal", sessionProperties.getLifesteal(), true, true);
         setItem(28,Material.PAPER, "Lingering Chance", sessionProperties.getLingeringChance(), true, true);
-        setItem(30,Material.PAPER, "Lingering Damage", sessionProperties.getLingeringDamage(), true, false);
+        setItem(30,Material.PAPER, "Lingering Damage", sessionProperties.getLingeringDamage(), true, true);
         setItem(32,Material.PAPER, "Outgoing Healing", sessionProperties.getOutgoingHealing(), true, true);
         setItem(34,Material.PAPER, "Incoming Healing", sessionProperties.getIncomingHealing(), true, true);
 

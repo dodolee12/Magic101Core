@@ -69,13 +69,13 @@ public class PropertySelectionPrompt extends StringPrompt {
                 returnText = "Please type how much lingering damage change this item should give. Must be a number between 0 and 1.";
                 break;
             case LINGERING_DAMAGE:
-                returnText = "Please type how much lingering damage this item should give. Must be an integer.";
+                returnText = "Please type how much lingering damage this item should give. Must be a number between 0 and 1.";
                 break;
             case OUTGOING_HEALING:
-                returnText = "Please type how much outgoing healing this item should give. Must be an integer";
+                returnText = "Please type how much outgoing healing this item should give. Must be a number between 0 and 1.";
                 break;
             case INCOMING_HEALING:
-                returnText = "Please type how much incoming healing this item should give. Must be an integer";
+                returnText = "Please type how much incoming healing this item should give. Must be a number between 0 and 1.";
                 break;
         }
         return returnText;
@@ -150,8 +150,8 @@ public class PropertySelectionPrompt extends StringPrompt {
                 properties.setLingeringChance(lingeringChance);
                 break;
             case LINGERING_DAMAGE:
-                int lingeringDamage = validateInteger(input,player);
-                if(lingeringDamage == -1){
+                double lingeringDamage = validateDouble(input,player);
+                if(Double.isNaN(lingeringDamage)){
                     break;
                 }
                 properties.setLingeringDamage(lingeringDamage);

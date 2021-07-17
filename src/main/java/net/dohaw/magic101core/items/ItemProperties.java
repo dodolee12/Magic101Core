@@ -1,5 +1,7 @@
 package net.dohaw.magic101core.items;
 
+import org.bukkit.entity.Item;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +16,14 @@ public class ItemProperties {
     private double defense = 0;
     private double lifesteal = 0;
     private double lingeringChance = 0;
-    private int lingeringDamage = 0;
+    private double lingeringDamage = 0;
     private double outgoingHealing = 0;
     private double incomingHealing = 0;
 
     public ItemProperties(){}
 
     public ItemProperties(int level, int damage, int maxHealth, double pierce, double critChance, double stunChance,
-                          double defense, double lifesteal, double lingeringChance, int lingeringDamage,
+                          double defense, double lifesteal, double lingeringChance, double lingeringDamage,
                           double outgoingHealing, double incomingHealing){
         this.level = level;
         this.damage = damage;
@@ -67,7 +69,7 @@ public class ItemProperties {
                 add("&cLingering Chance: &e+" + decimalFormat.format(getLingeringChance()) + "%");
             }
             if(getLingeringDamage() != 0){
-                add("&cLingering Damage: &e+" + getLingeringDamage());
+                add("&cLingering Damage: &e+" + decimalFormat.format(getLingeringDamage()) + "%");
             }
             if(getOutgoingHealing() != 0) {
                 add("&cOutgoing Healing: &e+" + decimalFormat.format(getOutgoingHealing()) + "%");
@@ -76,6 +78,23 @@ public class ItemProperties {
                 add("&cIncoming Healing: &e+" + decimalFormat.format(getIncomingHealing()) + "%");
             }
         }};
+    }
+
+    public static ItemProperties addTwoItemProperties(ItemProperties itemProperties1, ItemProperties itemProperties2){
+        ItemProperties added = new ItemProperties();
+        added.setDamage(itemProperties1.getDamage() + itemProperties2.getDamage());
+        added.setMaxHealth(itemProperties1.getMaxHealth() + itemProperties2.getMaxHealth());
+        added.setPierce(itemProperties1.getPierce() + itemProperties2.getPierce());
+        added.setCritChance(itemProperties1.getCritChance() + itemProperties2.getCritChance());
+        added.setStunChance(itemProperties1.getStunChance() + itemProperties2.getStunChance());
+        added.setDefense(itemProperties1.getDefense() + itemProperties2.getDefense());
+        added.setLifesteal(itemProperties1.getLifesteal() + itemProperties2.getLifesteal());
+        added.setLingeringChance(itemProperties1.getLingeringChance() + itemProperties2.getLingeringChance());
+        added.setLingeringDamage(itemProperties1.getLingeringDamage() + itemProperties2.getLingeringDamage());
+        added.setOutgoingHealing(itemProperties1.getOutgoingHealing() + itemProperties2.getOutgoingHealing());
+        added.setIncomingHealing(itemProperties1.getIncomingHealing() + itemProperties2.getIncomingHealing());
+
+        return added;
     }
 
     public int getLevel() {
@@ -150,11 +169,11 @@ public class ItemProperties {
         this.lingeringChance = lingeringChance;
     }
 
-    public int getLingeringDamage() {
+    public double getLingeringDamage() {
         return lingeringDamage;
     }
 
-    public void setLingeringDamage(int lingeringDamage) {
+    public void setLingeringDamage(double lingeringDamage) {
         this.lingeringDamage = lingeringDamage;
     }
 

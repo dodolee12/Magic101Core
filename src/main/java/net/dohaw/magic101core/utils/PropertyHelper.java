@@ -1,5 +1,7 @@
 package net.dohaw.magic101core.utils;
 
+import net.dohaw.magic101core.items.ItemProperties;
+import net.dohaw.magic101core.profiles.Profile;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -9,6 +11,36 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class PropertyHelper {
+
+    public static ItemProperties getAggregatedItemProperties(Player player){
+        ItemProperties aggregatedProperties = new ItemProperties();
+
+        ItemStack[] armor = player.getInventory().getArmorContents();
+
+        for(ItemStack item: armor){
+            PersistentDataContainer pdc = PropertyHelper.getPDCFromItem(item);
+
+            if(pdc == null){
+                continue;
+            }
+
+            aggregatedProperties.setDamage(aggregatedProperties.getDamage() + getIntegerFromPDC(pdc, "damage"));
+            aggregatedProperties.setMaxHealth(aggregatedProperties.getMaxHealth() + getIntegerFromPDC(pdc, "max-health"));
+            aggregatedProperties.setPierce(aggregatedProperties.getPierce() + getDoubleFromPDC(pdc, "pierce"));
+            aggregatedProperties.setCritChance(aggregatedProperties.getCritChance() + getDoubleFromPDC(pdc, "crit-chance"));
+            aggregatedProperties.setStunChance(aggregatedProperties.getStunChance() + getDoubleFromPDC(pdc, "stun-chance"));
+            aggregatedProperties.setDefense(aggregatedProperties.getDefense() + getDoubleFromPDC(pdc, "defense"));
+            aggregatedProperties.setLifesteal(aggregatedProperties.getLifesteal() + getDoubleFromPDC(pdc, "lifesteal"));
+            aggregatedProperties.setLingeringChance(aggregatedProperties.getLingeringChance() + getDoubleFromPDC(pdc, "lingering-chance"));
+            aggregatedProperties.setLingeringDamage(aggregatedProperties.getLingeringDamage() + getIntegerFromPDC(pdc, "lingering-damage"));
+            aggregatedProperties.setOutgoingHealing(aggregatedProperties.getOutgoingHealing() + getDoubleFromPDC(pdc, "outgoing-healing"));
+            aggregatedProperties.setIncomingHealing(aggregatedProperties.getIncomingHealing() + getDoubleFromPDC(pdc, "incoming-healing"));
+
+        }
+
+        return aggregatedProperties;
+
+    }
 
     public static int getAggregatedIntegerProperty(Player player, String key){
         ItemStack[] armor = player.getInventory().getArmorContents();

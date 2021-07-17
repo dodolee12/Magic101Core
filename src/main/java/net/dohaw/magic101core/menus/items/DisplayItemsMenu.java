@@ -61,7 +61,7 @@ public class DisplayItemsMenu extends Menu implements Listener {
     }
 
     private void addCustomItemToGUI(int invSlot, CustomItem item){
-        inv.setItem(invSlot,createGuiItem(item.getMaterial(),item.getDisplayName(),item.getLore()));
+        inv.setItem(invSlot,item.toItemStack());
     }
 
     private void createNextPageButton(){

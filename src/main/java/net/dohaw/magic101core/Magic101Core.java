@@ -7,18 +7,12 @@ import net.dohaw.magic101core.commands.ProfileSelectCommand;
 import net.dohaw.magic101core.config.ItemConfig;
 import net.dohaw.magic101core.config.ProfileConfig;
 import net.dohaw.magic101core.profiles.Profile;
-import net.dohaw.magic101core.utils.ALL_ITEMS;
+import net.dohaw.magic101core.runnables.UpdateItemsRunnable;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Arrays;
 
 
 public final class Magic101Core extends JavaPlugin {
@@ -47,29 +41,7 @@ public final class Magic101Core extends JavaPlugin {
     }
 
     private void fixItemsRunnable(){
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            for(Player player: Bukkit.getOnlinePlayers()){
-                Inventory inventory = player.getInventory();
-                ItemStack[] items = inventory.getContents();
-                for(int i = 0; i < items.length; ++i){
-                    ItemStack itemStack = items[i];
-                    if(itemStack == null){
-                        continue;
-                    }
-                    ItemMeta meta = itemStack.getItemMeta();
-                    if(meta == null){
-                        continue;
-                    }
-                    if(meta.getPersistentDataContainer().has(NamespacedKey.minecraft("key"), PersistentDataType.STRING)){
-                        String key = meta.getPersistentDataContainer().get(NamespacedKey.minecraft("key"), PersistentDataType.STRING);
-                        if(!ALL_ITEMS.ALL_ITEMS_MAP.containsKey(key)){
-                            continue;
-                        }
-                        inventory.setItem(i,ALL_ITEMS.ALL_ITEMS_MAP.get(key).toItemStack());
-                    }
-                }
-            }
-        }, 5, 5*20);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this,new UpdateItemsRunnable(), 5, 5*20);
     }
 
     private void kickAllPlayers(){

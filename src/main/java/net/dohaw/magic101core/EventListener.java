@@ -1,21 +1,25 @@
 package net.dohaw.magic101core;
 
+import net.dohaw.magic101core.items.CustomItem;
 import net.dohaw.magic101core.items.ItemProperties;
 import net.dohaw.magic101core.menus.profile.ProfileSelectionMenu;
 import net.dohaw.magic101core.profiles.Profile;
 import net.dohaw.magic101core.profiles.Schools;
+import net.dohaw.magic101core.runnables.LingeringDamageRunnable;
+import net.dohaw.magic101core.runnables.StunPlayerRunnable;
+import net.dohaw.magic101core.runnables.UpdateItemsRunnable;
 import net.dohaw.magic101core.spells.Spell;
-import net.dohaw.magic101core.utils.ALL_PROFILES;
-import net.dohaw.magic101core.utils.Constants;
-import net.dohaw.magic101core.utils.DisplayHealthUtil;
-import net.dohaw.magic101core.utils.PropertyHelper;
+import net.dohaw.magic101core.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -23,9 +27,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.swing.*;
+import java.util.Random;
 
 public class EventListener implements Listener {
 
@@ -78,27 +83,18 @@ public class EventListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e){
         Player player = e.getPlayer();
         Profile activeProfile = ALL_PROFILES.findActiveProfile(player.getUniqueId());
+        ItemStack itemInHand = e.getItem();
+
+        if(!itemIsUsable(player, activeProfile, itemInHand)){
+            player.sendMessage("You do not meet the class requirement to use this item");
+            e.setCancelled(true);
+        }
 
         if(e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-            ItemStack itemInHand = e.getItem();
 
             PersistentDataContainer pdc = PropertyHelper.getPDCFromItem(itemInHand);
 
             if(pdc == null){
-                return;
-            }
-
-            String schoolName = PropertyHelper.getStringFromPDC(pdc,"school");
-
-            if(schoolName == null){
-                return;
-            }
-
-            Schools school = Schools.valueOf(schoolName);
-
-            if(school != activeProfile.getSchool()) {
-                player.sendMessage("This item is only equippable by " + school + " class");
-                e.setCancelled(true);
                 return;
             }
 
@@ -110,11 +106,9 @@ public class EventListener implements Listener {
 
             Location playerLocation = player.getLocation();
 
-            ItemProperties aggregatedProperties = new ItemProperties();
+            ItemProperties aggregatedProperties = DamageHelper.getDamageProps(player);
 
-            //aggregate properties
-
-            Spell spell = Constants.getSpellFromName(spellName, playerLocation, aggregatedProperties, player);
+            Spell spell = Constants.getSpellFromName(spellName, playerLocation, aggregatedProperties, player, plugin);
 
             spell.cast();
 
@@ -147,6 +141,65 @@ public class EventListener implements Listener {
 //            return;
 //        }
 //    }
+
+    @EventHandler
+    public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e){
+        e.setDamage(0);
+        Entity attacker = e.getDamager();
+        Entity attacked = e.getEntity();
+
+        if(e.getDamager() instanceof Player && e.getEntity() instanceof Player){
+            Player attackerPlayer = (Player) attacker;
+            Profile attackerProfile = ALL_PROFILES.findActiveProfile(attackerPlayer.getUniqueId());
+            if(!itemIsUsable(attackerPlayer, attackerProfile, attackerPlayer.getInventory().getItemInMainHand())){
+                e.setCancelled(true);
+                return;
+            }
+            DamageHelper.playerDamagePlayerHandler(attackerPlayer, (Player) attacked, plugin);
+        }
+
+    }
+
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent e){
+        Player player = e.getPlayer();
+        Profile activeProfile = ALL_PROFILES.findActiveProfile(player.getUniqueId());
+        activeProfile.saveProfile(player);
+
+        player.getInventory().clear();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    ProfileSelectionMenu profileSelectionMenu = new ProfileSelectionMenu(plugin);
+                    profileSelectionMenu.initializeItems(player);
+                    profileSelectionMenu.openInventory(player);
+                    ALL_PROFILES.PROFILES_IN_SELECTION.add(player.getUniqueId());
+        }
+                , 3);
+    }
+
+    private boolean itemIsUsable(Player player, Profile profile, ItemStack item){
+
+        PersistentDataContainer pdc = PropertyHelper.getPDCFromItem(item);
+
+        if(pdc == null){
+            return true;
+        }
+
+        String schoolName = PropertyHelper.getStringFromPDC(pdc,"school");
+
+        if(schoolName == null){
+            return true;
+        }
+
+        Schools school = Schools.valueOf(schoolName);
+
+        if(school != Schools.UNIVERSAL && school != profile.getSchool()) {
+            return false;
+        }
+
+        return true;
+    }
 
 
 }
