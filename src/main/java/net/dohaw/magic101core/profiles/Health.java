@@ -61,4 +61,9 @@ public class Health {
     public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
     }
+
+    public void changeMaxHealth(int amount){
+        this.maxHealth += amount;
+        this.currentHealth += amount;
+    }
 }

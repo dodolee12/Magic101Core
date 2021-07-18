@@ -1,5 +1,6 @@
 package net.dohaw.magic101core;
 
+import com.codingforcookies.armorequip.ArmorEquipEvent;
 import net.dohaw.magic101core.items.CustomItem;
 import net.dohaw.magic101core.items.ItemProperties;
 import net.dohaw.magic101core.menus.profile.ProfileSelectionMenu;
@@ -12,6 +13,7 @@ import net.dohaw.magic101core.spells.Spell;
 import net.dohaw.magic101core.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -144,11 +146,11 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e){
-        e.setDamage(0);
         Entity attacker = e.getDamager();
         Entity attacked = e.getEntity();
 
         if(e.getDamager() instanceof Player && e.getEntity() instanceof Player){
+            e.setDamage(0);
             Player attackerPlayer = (Player) attacker;
             Profile attackerProfile = ALL_PROFILES.findActiveProfile(attackerPlayer.getUniqueId());
             if(!itemIsUsable(attackerPlayer, attackerProfile, attackerPlayer.getInventory().getItemInMainHand())){
@@ -199,6 +201,49 @@ public class EventListener implements Listener {
         }
 
         return true;
+    }
+
+    @EventHandler
+    public void onArmorEquip(ArmorEquipEvent e){
+        if(e.getMethod().equals(ArmorEquipEvent.EquipMethod.DEATH)){
+            return;
+        }
+        Player player = e.getPlayer();
+        Profile activeProfile = ALL_PROFILES.findActiveProfile(player.getUniqueId());
+        ItemStack newArmor = e.getNewArmorPiece();
+
+        if(!itemIsUsable(player, activeProfile, newArmor)){
+            player.sendMessage("You do not meet the class requirement to use this item");
+            e.setCancelled(true);
+        }
+
+        //unequip
+        if(newArmor.getType().equals(Material.AIR)){
+            ItemStack oldArmor = e.getOldArmorPiece();
+
+            PersistentDataContainer pdc = PropertyHelper.getPDCFromItem(oldArmor);
+
+            int maxHealthLoss = -PropertyHelper.getIntegerFromPDC(pdc,"max-health");
+
+            activeProfile.getHealth().changeMaxHealth(maxHealthLoss);
+
+        }
+        //equip
+        else{
+            ItemStack oldArmor = e.getOldArmorPiece();
+
+            PersistentDataContainer oldArmorPDC = PropertyHelper.getPDCFromItem(oldArmor);
+
+            PersistentDataContainer newArmorPDC = PropertyHelper.getPDCFromItem(newArmor);
+
+
+            int maxHealthLoss = PropertyHelper.getIntegerFromPDC(oldArmorPDC,"max-health");
+            int maxHealthGain = PropertyHelper.getIntegerFromPDC(newArmorPDC, "max-health");
+
+            activeProfile.getHealth().changeMaxHealth(maxHealthGain - maxHealthLoss);
+        }
+
+        DisplayHealthUtil.updateHealth(activeProfile, player);
     }
 
 

@@ -5,6 +5,7 @@ import net.dohaw.corelib.menus.Menu;
 import net.dohaw.magic101core.profiles.ProfileCreationSession;
 import net.dohaw.magic101core.profiles.Schools;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
+import net.dohaw.magic101core.utils.Constants;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,7 +35,7 @@ public class ClassSelectionMenu extends Menu implements Listener {
             if(school == Schools.UNIVERSAL){
                 continue;
             }
-            inv.setItem(i, createGuiItem(Material.STICK, school.toString(), new ArrayList<>()));
+            inv.setItem(i, createGuiItem(Constants.schoolsToMaterial.get(school), school.toString(), new ArrayList<>()));
             ++i;
         }
     }

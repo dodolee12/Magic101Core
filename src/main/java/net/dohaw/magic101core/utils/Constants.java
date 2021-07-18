@@ -4,6 +4,7 @@ import net.dohaw.magic101core.items.ItemProperties;
 import net.dohaw.magic101core.profiles.Schools;
 import net.dohaw.magic101core.spells.*;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +30,16 @@ public final class Constants {
         put(Schools.STORM,"Damage Bubble");
         put(Schools.FIRE,"Fire Lingering AOE");
         put(Schools.MYTH,"Minion");
+    }};
+
+    public static Map<Schools, Material> schoolsToMaterial = new HashMap<Schools, Material>(){{
+        put(Schools.ICE,Material.ICE);
+        put(Schools.LIFE,Material.GRASS);
+        put(Schools.DEATH,Material.WITHER_SKELETON_SKULL);
+        put(Schools.BALANCE,Material.STICK);
+        put(Schools.STORM,Material.STICK);
+        put(Schools.FIRE,Material.FIRE);
+        put(Schools.MYTH,Material.STICK);
     }};
 
     public static Spell getSpellFromName(String spellName, Location location, ItemProperties itemProperties, Player player, JavaPlugin plugin){
