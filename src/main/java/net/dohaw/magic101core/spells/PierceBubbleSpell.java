@@ -8,15 +8,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class PierceBubbleSpell extends Spell {
 
+    private final int DURATION = 30;
+
     public PierceBubbleSpell(Location location, Player player, JavaPlugin plugin) {
         super(location, player, plugin);
     }
 
     @Override
     public void cast() {
-        create15BlockRadius(Color.BLACK);
+        create15BlockRadius(Color.BLACK, DURATION);
         player.sendMessage("You have cast Pierce Bubble");
 
-        applyBuff("pierce", 0.15, 30);
+        applyBuff("Pierce", 0.15, DURATION);
     }
 }

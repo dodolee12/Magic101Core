@@ -6,6 +6,7 @@ import net.dohaw.magic101core.items.ItemCreationSession;
 import net.dohaw.magic101core.menus.profile.ProfileCreationMenu;
 import net.dohaw.magic101core.profiles.ProfileCreationSession;
 import net.dohaw.magic101core.profiles.Schools;
+import net.dohaw.magic101core.utils.Constants;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +30,7 @@ public class ItemClassMenu  extends Menu implements Listener {
     public void initializeItems(Player player) {
         int i = 0;
         for(Schools school :Schools.values()){
-            inv.setItem(i, createGuiItem(Material.STICK, school.toString(), new ArrayList<>()));
+            inv.setItem(i, createGuiItem(Constants.schoolsToMaterial.get(school), school.toString(), new ArrayList<>()));
             ++i;
         }
     }

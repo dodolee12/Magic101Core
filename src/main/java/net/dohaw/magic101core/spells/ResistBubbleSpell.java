@@ -11,15 +11,17 @@ import java.util.List;
 
 public class ResistBubbleSpell extends Spell{
 
+    private final int DURATION = 30;
+
     public ResistBubbleSpell(Location location, Player player, JavaPlugin plugin) {
         super(location, player, plugin);
     }
 
     @Override
     public void cast() {
-        create15BlockRadius(Color.BLUE);
+        create15BlockRadius(Color.BLUE, DURATION);
         player.sendMessage("You have cast Resist Bubble");
 
-        applyBuff("resist", 0.20, 30);
+        applyBuff("Defense", 0.20, DURATION);
     }
 }

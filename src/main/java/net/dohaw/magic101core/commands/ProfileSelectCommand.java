@@ -1,6 +1,6 @@
 package net.dohaw.magic101core.commands;
 
-import net.dohaw.magic101core.menus.profile.ProfileSelectionMenu;
+import net.dohaw.magic101core.utils.MenuUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,8 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ProfileSelectCommand implements CommandExecutor {
 
     JavaPlugin plugin;
-    public ProfileSelectCommand(JavaPlugin claimPlugin){
-        this.plugin = claimPlugin;
+    public ProfileSelectCommand(JavaPlugin plugin){
+        this.plugin = plugin;
     }
 
     @Override
@@ -22,9 +22,7 @@ public class ProfileSelectCommand implements CommandExecutor {
         Player player = (Player) sender;
 
 
-        ProfileSelectionMenu profileSelectionMenu = new ProfileSelectionMenu(plugin);
-        profileSelectionMenu.initializeItems(player);
-        profileSelectionMenu.openInventory(player);
+        MenuUtil.openProfileSelectionMenu(plugin,player);
 
         return true;
     }

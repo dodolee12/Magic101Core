@@ -1,16 +1,19 @@
 package net.dohaw.magic101core.profiles;
 
+import net.dohaw.magic101core.runnables.UpdateItemsRunnable;
+import net.dohaw.magic101core.runnables.UpdatePlayerItemsRunnable;
 import net.dohaw.magic101core.utils.ALL_ITEMS;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
 import net.dohaw.magic101core.utils.DisplayHealthUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.*;
 
@@ -69,7 +72,7 @@ public class Profile {
     public void saveProfile(Player player){
         setActive(false);
         setLogoutLocation(player.getLocation());
-        setEquippedArmor(player.getEquipment().getArmorContents());
+        setEquippedArmor(getArmor(player.getInventory()));
         setStorageItems(player.getInventory().getStorageContents());
         setExtraItems(player.getInventory().getExtraContents());
         player.getInventory().clear();
@@ -77,14 +80,20 @@ public class Profile {
 
     public void loadProfile(Player player) {
         setActive(true);
-        if (equippedArmor != null) {
-            ItemStack[] reversedArmorList = Arrays.copyOf(equippedArmor, equippedArmor.length);
-            player.getEquipment().setArmorContents(reversedArmorList);
-        }
+        player.getEquipment().setArmorContents(equippedArmor);
         player.getInventory().setStorageContents(storageItems);
         player.getInventory().setExtraContents(extraItems);
         player.teleport(logoutLocation);
         DisplayHealthUtil.updateHealth(this, player);
+    }
+
+    private ItemStack[] getArmor(PlayerInventory inventory){
+        ItemStack[] armor = new ItemStack[4];
+        armor[0] = inventory.getBoots() == null ? new ItemStack(Material.AIR) : inventory.getBoots() ;
+        armor[1] = inventory.getLeggings() == null ? new ItemStack(Material.AIR) : inventory.getLeggings();
+        armor[2] = inventory.getChestplate() == null ? new ItemStack(Material.AIR) : inventory.getChestplate();
+        armor[3] = inventory.getHelmet() == null ? new ItemStack(Material.AIR) : inventory.getHelmet();
+        return armor;
     }
 
     public ProfileCreationSession getSession() {
@@ -180,6 +189,14 @@ public class Profile {
     }
     public void removeBuff(String buff, double amount){
         inGameBuffsMap.put(buff,inGameBuffsMap.getOrDefault(buff,0D) - amount);
+    }
+
+    public void setBuff(String buff, double amount){
+        inGameBuffsMap.put(buff,amount);
+    }
+
+    public Set<String> getBuffNames(){
+        return inGameBuffsMap.keySet();
     }
 
     public double getBuff(String buff){

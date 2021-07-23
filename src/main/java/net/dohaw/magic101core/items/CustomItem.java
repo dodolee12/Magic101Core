@@ -2,16 +2,19 @@ package net.dohaw.magic101core.items;
 
 import net.dohaw.corelib.StringUtils;
 import net.dohaw.magic101core.profiles.Schools;
+import net.dohaw.magic101core.utils.Constants;
+import net.dohaw.magic101core.utils.StringUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CustomItem {
 
@@ -54,8 +57,27 @@ public class CustomItem {
         double lingeringDamage = pdc.get(NamespacedKey.minecraft("lingering-damage"), PersistentDataType.DOUBLE);
         double outgoingHealing = pdc.get(NamespacedKey.minecraft("outgoing-healing"), PersistentDataType.DOUBLE);
         double incomingHealing = pdc.get(NamespacedKey.minecraft("incoming-healing"), PersistentDataType.DOUBLE);
+
+        Map<String,Double> classProps = new HashMap<>();
+        for(Schools school: Schools.values()) {
+            if (school == Schools.UNIVERSAL) {
+                continue;
+            }
+            String schoolPrefix = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase());
+
+            for(String prop: Constants.classProps){
+                String fieldName = schoolPrefix + prop;
+                String fieldKey = fieldName.replace(" ","-").toLowerCase();
+                if(pdc.has(NamespacedKey.minecraft(fieldKey), PersistentDataType.DOUBLE)){
+                    double propAmount = pdc.get(NamespacedKey.minecraft(fieldKey), PersistentDataType.DOUBLE);
+                    classProps.put(fieldName,propAmount);
+                }
+            }
+        }
+
         ItemProperties itemProperties = new ItemProperties(level, damage, maxHealth, pierce, critChance, stunChance,
                 defense, lifesteal, lingeringChance, lingeringDamage, outgoingHealing, incomingHealing);
+        itemProperties.setClassSpecificProperties(classProps);
         this.itemProperties = itemProperties;
         this.lore = getTrueLore(itemStack.getItemMeta().getLore(), itemProperties, spellName);
 
@@ -70,7 +92,7 @@ public class CustomItem {
         if(lore == null){
             return new ArrayList<>();
         }
-        int propLoreSize = itemProperties.getPropLore().size();
+        int propLoreSize = itemProperties.getTotalPropLore().size();
         int unneccesaryLoreSize = spellName.equals("None") ? propLoreSize + 1 : propLoreSize + 2;
         lore.subList(lore.size() - unneccesaryLoreSize, lore.size()).clear();
         return lore;
@@ -81,9 +103,9 @@ public class CustomItem {
         String itemDisplayname = StringUtils.colorString(displayName);
         List<String> itemlore = new ArrayList<>(lore);
         String classMessage = school == Schools.UNIVERSAL ? "&cUNIVERSAL ITEM" : "&cONLY EQUIPPABLE BY " + school.toString() + " CLASS";
-        String spellMessage = "&cThis item can use " + spellName;
+        String spellMessage = "&cRight click to use " + spellName;
 
-        itemlore.addAll(itemProperties.getPropLore());
+        itemlore.addAll(itemProperties.getTotalPropLore());
 
         if(!spellName.equals("None")){
             itemlore.add(spellMessage);
@@ -129,6 +151,19 @@ public class CustomItem {
         pdc.set(NamespacedKey.minecraft("lingering-damage"), PersistentDataType.DOUBLE, itemProperties.getLingeringDamage());
         pdc.set(NamespacedKey.minecraft("outgoing-healing"), PersistentDataType.DOUBLE, itemProperties.getOutgoingHealing());
         pdc.set(NamespacedKey.minecraft("incoming-healing"), PersistentDataType.DOUBLE, itemProperties.getIncomingHealing());
+
+        for(Schools school: Schools.values()) {
+            if (school == Schools.UNIVERSAL) {
+                continue;
+            }
+            String schoolPrefix = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase());
+
+            for(String prop: Constants.classProps){
+                String fieldName = schoolPrefix + prop;
+                String fieldKey = fieldName.replace(" ","-").toLowerCase();
+                pdc.set(NamespacedKey.minecraft(fieldKey), PersistentDataType.DOUBLE, itemProperties.getClassProperty(fieldName));
+            }
+        }
 
         return meta;
     }

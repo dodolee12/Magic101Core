@@ -6,10 +6,11 @@ import net.dohaw.magic101core.items.CustomItem;
 import net.dohaw.magic101core.items.ItemCreationSession;
 import net.dohaw.magic101core.items.ItemProperties;
 import net.dohaw.magic101core.menus.items.lore.ViewLoreMenu;
+import net.dohaw.magic101core.menus.items.properties.ClassItemPropertiesMenu;
+import net.dohaw.magic101core.menus.items.properties.UniversalItemPropertiesMenu;
 import net.dohaw.magic101core.profiles.Schools;
 import net.dohaw.magic101core.prompts.ItemCreationSessionPrompt;
 import net.dohaw.magic101core.utils.ALL_ITEMS;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
@@ -62,7 +63,7 @@ public class EditItemMenu extends Menu implements Listener {
             Change Properties
          */
 
-        inv.setItem(16, createGuiItem(Material.TRIPWIRE_HOOK, "&eChange Properties", sessionProps.getPropLore()));
+        inv.setItem(16, createGuiItem(Material.TRIPWIRE_HOOK, "&eChange Universal Properties", sessionProps.getPropLore()));
 
         /*
             Set Class
@@ -92,6 +93,9 @@ public class EditItemMenu extends Menu implements Listener {
         }};
 
         inv.setItem(32, createGuiItem(Material.WRITABLE_BOOK, "&eChange Spell", spellLore));
+
+        inv.setItem(34, createGuiItem(Material.TRIPWIRE_HOOK, "&eChange Class Specific Properties", sessionProps.getClassPropsLore()));
+
 
         //back buttonr
         inv.setItem(inv.getSize() - 9, createGuiItem(Material.BARRIER, "&eDelete Item", new ArrayList<>()));
@@ -142,10 +146,10 @@ public class EditItemMenu extends Menu implements Listener {
         }else if(slotClicked == 16) {
 
             //Change properties menu
-            ItemPropertiesMenu itemPropertiesMenu = new ItemPropertiesMenu(plugin, this, session);
-            itemPropertiesMenu.initializeItems(player);
+            UniversalItemPropertiesMenu universalItemPropertiesMenu = new UniversalItemPropertiesMenu(plugin, this, session);
+            universalItemPropertiesMenu.initializeItems(player);
             player.closeInventory();
-            itemPropertiesMenu.openInventory(player);
+            universalItemPropertiesMenu.openInventory(player);
 
         }else if(slotClicked == 30) {
             ViewLoreMenu dilm = new ViewLoreMenu(plugin, this, session);
@@ -172,6 +176,13 @@ public class EditItemMenu extends Menu implements Listener {
             newMenu.initializeItems(player);
             player.closeInventory();
             newMenu.openInventory(player);
+
+        }else if(slotClicked == 34){
+
+            ClassItemPropertiesMenu classItemPropertiesMenu = new ClassItemPropertiesMenu(plugin, this, session);
+            classItemPropertiesMenu.initializeItems(player);
+            player.closeInventory();
+            classItemPropertiesMenu.openInventory(player);
 
         }else if(slotClicked == editItemSlot){
             //edit item\

@@ -1,12 +1,12 @@
-package net.dohaw.magic101core.menus.items;
+package net.dohaw.magic101core.menus.items.properties;
 
 import net.dohaw.corelib.JPUtils;
 import net.dohaw.corelib.menus.Menu;
 import net.dohaw.magic101core.items.ItemCreationSession;
 import net.dohaw.magic101core.items.ItemProperties;
-import net.dohaw.magic101core.prompts.ItemCreationSessionPrompt;
-import net.dohaw.magic101core.prompts.ProfileCreationSessionPrompt;
-import net.dohaw.magic101core.prompts.PropertySelectionPrompt;
+import net.dohaw.magic101core.menus.items.CreateItemMenu;
+import net.dohaw.magic101core.menus.items.EditItemMenu;
+import net.dohaw.magic101core.prompts.UniversalPropertySelectionPrompt;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
@@ -23,12 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ItemPropertiesMenu extends Menu implements Listener {
+public class UniversalItemPropertiesMenu extends Menu implements Listener {
 
     private ItemCreationSession session;
 
-
-    public ItemPropertiesMenu(JavaPlugin plugin, Menu previousMenu, ItemCreationSession session) {
+    public UniversalItemPropertiesMenu(JavaPlugin plugin, Menu previousMenu, ItemCreationSession session) {
         super(plugin, previousMenu, "Item Properties", 45);
         this.session = session;
         JPUtils.registerEvents(this);
@@ -84,7 +83,7 @@ public class ItemPropertiesMenu extends Menu implements Listener {
         if(clickedItem == null || clickedItem.getType().equals(Material.AIR) || clickedItem.getType().equals(Material.BLACK_STAINED_GLASS_PANE)) return;
 
         if(slotClicked == (inv.getSize() - 1)){
-            if(previousMenu instanceof  CreateItemMenu){
+            if(previousMenu instanceof CreateItemMenu){
                 ((CreateItemMenu) previousMenu).setSession(session);
             }else if(previousMenu instanceof EditItemMenu){
                 ((EditItemMenu) previousMenu).setSession(session);
@@ -95,10 +94,10 @@ public class ItemPropertiesMenu extends Menu implements Listener {
             return;
         }
 
-        PropertySelectionPrompt.Change change = slotToChange.get(slotClicked);
+        UniversalPropertySelectionPrompt.Change change = slotToChange.get(slotClicked);
 
         ConversationFactory cf = new ConversationFactory(plugin);
-        Conversation conv = cf.withFirstPrompt(new PropertySelectionPrompt(change, session.getItemProperties(), this, session))
+        Conversation conv = cf.withFirstPrompt(new UniversalPropertySelectionPrompt(change, session.getItemProperties(), this, session))
                 .withLocalEcho(false).buildConversation(player);;
         conv.begin();
 
@@ -114,19 +113,19 @@ public class ItemPropertiesMenu extends Menu implements Listener {
         this.session = session;
     }
 
-    private final Map<Integer, PropertySelectionPrompt.Change> slotToChange = new HashMap<Integer, PropertySelectionPrompt.Change>(){{
-        put(10, PropertySelectionPrompt.Change.LEVEL);
-        put(12, PropertySelectionPrompt.Change.DAMAGE);
-        put(14, PropertySelectionPrompt.Change.MAX_HEALTH);
-        put(16, PropertySelectionPrompt.Change.PIERCE);
-        put(19, PropertySelectionPrompt.Change.CRIT_CHANCE);
-        put(21, PropertySelectionPrompt.Change.STUN_CHANCE);
-        put(23, PropertySelectionPrompt.Change.DEFENSE);
-        put(25, PropertySelectionPrompt.Change.LIFESTEAL);
-        put(28, PropertySelectionPrompt.Change.LINGERING_CHANCE);
-        put(30, PropertySelectionPrompt.Change.LINGERING_DAMAGE);
-        put(32, PropertySelectionPrompt.Change.OUTGOING_HEALING);
-        put(34, PropertySelectionPrompt.Change.INCOMING_HEALING);
+    private final Map<Integer, UniversalPropertySelectionPrompt.Change> slotToChange = new HashMap<Integer, UniversalPropertySelectionPrompt.Change>(){{
+        put(10, UniversalPropertySelectionPrompt.Change.LEVEL);
+        put(12, UniversalPropertySelectionPrompt.Change.DAMAGE);
+        put(14, UniversalPropertySelectionPrompt.Change.MAX_HEALTH);
+        put(16, UniversalPropertySelectionPrompt.Change.PIERCE);
+        put(19, UniversalPropertySelectionPrompt.Change.CRIT_CHANCE);
+        put(21, UniversalPropertySelectionPrompt.Change.STUN_CHANCE);
+        put(23, UniversalPropertySelectionPrompt.Change.DEFENSE);
+        put(25, UniversalPropertySelectionPrompt.Change.LIFESTEAL);
+        put(28, UniversalPropertySelectionPrompt.Change.LINGERING_CHANCE);
+        put(30, UniversalPropertySelectionPrompt.Change.LINGERING_DAMAGE);
+        put(32, UniversalPropertySelectionPrompt.Change.OUTGOING_HEALING);
+        put(34, UniversalPropertySelectionPrompt.Change.INCOMING_HEALING);
     }};
 
 }

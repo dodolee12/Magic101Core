@@ -4,7 +4,7 @@ public class ProfileCreationSession {
 
     private String profileName = "Profile";
     private String characterName = "Not Set";
-    private Schools school = null;
+    private Schools school = Schools.UNIVERSAL;
 
     public ProfileCreationSession(){
     }

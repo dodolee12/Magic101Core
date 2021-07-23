@@ -2,17 +2,17 @@ package net.dohaw.magic101core.prompts;
 
 import net.dohaw.magic101core.items.ItemCreationSession;
 import net.dohaw.magic101core.items.ItemProperties;
-import net.dohaw.magic101core.menus.items.ItemPropertiesMenu;
+import net.dohaw.magic101core.menus.items.properties.UniversalItemPropertiesMenu;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
-public class PropertySelectionPrompt extends StringPrompt {
+public class UniversalPropertySelectionPrompt extends StringPrompt {
 
     private Change change;
     private ItemProperties properties;
-    private ItemPropertiesMenu previousMenu;
+    private UniversalItemPropertiesMenu previousMenu;
     private ItemCreationSession session;
 
     public enum Change {
@@ -30,7 +30,7 @@ public class PropertySelectionPrompt extends StringPrompt {
         INCOMING_HEALING
     }
 
-    public PropertySelectionPrompt(Change change, ItemProperties properties, ItemPropertiesMenu prevMenu, ItemCreationSession session) {
+    public UniversalPropertySelectionPrompt(Change change, ItemProperties properties, UniversalItemPropertiesMenu prevMenu, ItemCreationSession session) {
         this.change = change;
         this.properties = properties;
         this.previousMenu = prevMenu;

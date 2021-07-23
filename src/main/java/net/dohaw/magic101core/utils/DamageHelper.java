@@ -1,26 +1,34 @@
 package net.dohaw.magic101core.utils;
 
-import net.dohaw.magic101core.items.CustomItem;
 import net.dohaw.magic101core.items.ItemProperties;
 import net.dohaw.magic101core.profiles.Profile;
-import net.dohaw.magic101core.runnables.LingeringDamageRunnable;
-import net.dohaw.magic101core.runnables.StunPlayerRunnable;
+import net.dohaw.magic101core.profiles.Schools;
+import net.dohaw.magic101core.runnables.LingeringDamageEntityRunnable;
+import net.dohaw.magic101core.runnables.LingeringDamagePlayerRunnable;
+import net.dohaw.magic101core.runnables.StunEntityRunnable;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class DamageHelper {
 
     private static Random RNG = new Random();
 
-    public static void playerDamagePlayerHandler(Player attacker, Player attacked, JavaPlugin plugin){
-
-        Profile attackerActiveProfile = ALL_PROFILES.findActiveProfile(attacker.getUniqueId());
-        Profile attackedActiveProfile = ALL_PROFILES.findActiveProfile(attacked.getUniqueId());
-
-        ItemProperties damageProps = getDamageProps(attacker);
+    public static void damageHandler(LivingEntity attacker, LivingEntity attacked, JavaPlugin plugin){
+        Profile attackerActiveProfile = null;
+        Profile attackedActiveProfile = null;
+        if(attacker instanceof Player){
+            attackerActiveProfile = ALL_PROFILES.findActiveProfile(attacker.getUniqueId());
+        }
+        if(attacked instanceof Player){
+            attackedActiveProfile = ALL_PROFILES.findActiveProfile(attacked.getUniqueId());
+        }
+        ItemProperties damageProps = PropertyHelper.getAggregatedItemProperties(attacker);
 
         if(damageProps == null){
             return;
@@ -28,6 +36,8 @@ public class DamageHelper {
 
         //calculate damage
         int damage = getDamage(damageProps,attackerActiveProfile);
+
+        Map<Schools,Integer> classDamages = getClassDamages(damageProps);
 
         //check if crit
         damage = applyCritChance(damage,damageProps,attackerActiveProfile);
@@ -38,69 +48,135 @@ public class DamageHelper {
         //lingering chance
         boolean lingering = checkLingering(damageProps);
 
-        //TODO check if lingering healing affects lifesteal
-
         //attacked stats
         ItemProperties damagedPlayerProps = PropertyHelper.getAggregatedItemProperties(attacked);
 
         //defense + pierce
         damage = applyDefenseAndPierce(damage, damageProps, damagedPlayerProps, attackerActiveProfile, attackedActiveProfile);
 
-        int lifeToSteal = (int) (damage * (damageProps.getLifesteal()/100));
+        classDamages = applyClassDefenseAndPierce(classDamages,damageProps,damagedPlayerProps);
 
-        //healing and damage
-        attackerActiveProfile.getHealth().heal(lifeToSteal);
-        attackedActiveProfile.getHealth().damage(damage);
-        if(attackedActiveProfile.getHealth().isDead()){
-            attackedActiveProfile.getHealth().healToFull();
-            attacked.setHealth(0);
+        //add class damages
+        for(Schools school: classDamages.keySet()){
+            damage += classDamages.get(school);
         }
 
-        DisplayHealthUtil.updateHealth(attackerActiveProfile,attacker);
-        DisplayHealthUtil.updateHealth(attackedActiveProfile,attacked);
+        //incoming healing affects lifesteal
+
+        int lifeToSteal = (int) (damage * (damageProps.getLifesteal()/100) * (1 + damageProps.getIncomingHealing()/100));
+
+        //healing and damage
+        handleAttackerHeal(attacker,lifeToSteal,attackerActiveProfile);
+        handleAttacked(attacked,damage,attackedActiveProfile);
 
         //stun player
         if(stun){
             //stun runnable
-            new StunPlayerRunnable(attacked, attacked.getLocation()).runTaskTimer(plugin,1,2);
+            new StunEntityRunnable(attacked, attacked.getLocation()).runTaskTimer(plugin,1,2);
             attacker.sendMessage("Your attack stunned the target");
             attacked.sendMessage("You have been stunned");
         }
-
         if(lingering){
             int lingeringDamage = (int) (damage * (damageProps.getLingeringDamage()/100));
-            new LingeringDamageRunnable(attacked, attackedActiveProfile, lingeringDamage).runTaskTimer(plugin,20,20);
-            attacker.sendMessage("Your attack lingered");
+            if(attacked instanceof Player){
+                new LingeringDamagePlayerRunnable((Player) attacked, attackedActiveProfile, lingeringDamage).runTaskTimer(plugin,20,20);
+            }
+            else{
+                new LingeringDamageEntityRunnable(attacked,lingeringDamage).runTaskTimer(plugin,20,20);
+            }
             attacked.sendMessage("You have been attacked by a lingering attack");
+            attacker.sendMessage("Your attack lingered");
         }
+
 
     }
 
-    public static ItemProperties getDamageProps(Player attacker){
-        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+    private static Map<Schools,Integer> getClassDamages(ItemProperties damageProps){
+        Map<Schools, Integer> classDamages = new HashMap<>();
+        for(Schools school: Schools.values()){
+            String fieldName = school.toString().toLowerCase() + "-damage";
+            if(damageProps.getClassProperty(fieldName) != 0){
+                classDamages.put(school,(int) damageProps.getClassProperty(fieldName));
+            }
+        }
+        return classDamages;
+    }
 
-        if(weapon.getItemMeta() == null){
-            return null;
+    private static Map<Schools,Integer> applyClassDefenseAndPierce(Map<Schools,Integer> classDamages, ItemProperties damageProps,
+                                                                   ItemProperties damagedPlayerProps){
+        for(Schools school: classDamages.keySet()){
+            String defenseFieldName = school.toString().toLowerCase() + "-resist";
+            String pierceFieldName = school.toString().toLowerCase() + "-pierce";
+
+            //no need to check if theres no defense
+            double rawDefense = damagedPlayerProps.getClassProperty(defenseFieldName);
+            if(rawDefense == 0){
+                continue;
+            }
+
+            double pierce = damageProps.getClassProperty(pierceFieldName);
+
+            double netDefense = rawDefense - pierce;
+            if(netDefense < 0){
+                netDefense = 0;
+            }
+            int damage = classDamages.get(school);
+
+            classDamages.put(school,(int) (damage * (1 - netDefense)));
+        }
+        return classDamages;
+    }
+
+    private static void handleAttackerHeal(LivingEntity attacker, int lifeToSteal, Profile attackerActiveProfile){
+        if(attacker instanceof Player){
+            attackerActiveProfile.getHealth().heal(lifeToSteal);
+            DisplayHealthUtil.updateHealth(attackerActiveProfile, (Player) attacker);
+        }
+        else{
+            int health = (int) (attacker.getHealth() + lifeToSteal);
+            attacker.setHealth(health);
+            DisplayHealthUtil.updateHealth(attacker, health);
+        }
+    }
+
+    private static void handleAttacked(LivingEntity attacked, int damage, Profile attackedActiveProfile){
+        if(attacked instanceof Player){
+            attackedActiveProfile.getHealth().damage(damage);
+            if(attackedActiveProfile.getHealth().isDead()){
+                attackedActiveProfile.getHealth().healToFull();
+                attacked.setHealth(0);
+            }
+
+            DisplayHealthUtil.updateHealth(attackedActiveProfile,(Player) attacked);
+
+        }
+        else{
+            int health = (int) (attacked.getHealth() - damage);
+            if(health < 0){
+                health = 0;
+            }
+            attacked.setHealth(health);
+            DisplayHealthUtil.updateHealth(attacked, health);
         }
 
-        if(!CustomItem.canCreateCustomItem(weapon)){
-            return null;
-        }
 
-        ItemProperties weaponProps = new CustomItem(weapon).getItemProperties();
-        ItemProperties attackerProps = PropertyHelper.getAggregatedItemProperties(attacker);
-
-        return ItemProperties.addTwoItemProperties(weaponProps, attackerProps);
     }
 
     private static int getDamage(ItemProperties damageProps, Profile profile){
-        return (int) (damageProps.getDamage() * (1 + profile.getBuff("damage"))); // possibility of user in damage bubble
+        if(profile == null){
+            return damageProps.getDamage();
+        }
+        return (int) (damageProps.getDamage() * (1 + profile.getBuff("Damage"))); // possibility of user in damage bubble
     }
 
     //input: damage in
     //output: damage after applying crit (if needed)
     private static int applyCritChance(int damage, ItemProperties damageProps, Profile profile){
-        double critChance = damageProps.getCritChance()/100 + profile.getBuff("critical strike chance");
+        double critChance = damageProps.getCritChance()/100;
+        if(profile != null){
+            critChance += profile.getBuff("Critical strike chance");
+
+        }
         if(critChance > 0 && RNG.nextDouble() < critChance){
             damage *= 2;
         }
@@ -122,8 +198,16 @@ public class DamageHelper {
     //input damage, output damage after defense and pierce
     private static int applyDefenseAndPierce(int damage, ItemProperties damageProps, ItemProperties damagedPlayerProps,
                                              Profile attackerProfile, Profile attackedProfile){
-        double rawDefense = damagedPlayerProps.getDefense()/100 + attackedProfile.getBuff("resist");
-        double pierce = damageProps.getPierce()/100 + attackerProfile.getBuff("pierce");
+
+
+        double rawDefense = damagedPlayerProps.getDefense()/100;
+        if(attackedProfile != null){
+            rawDefense += attackedProfile.getBuff("Defense");
+        }
+        double pierce = damageProps.getPierce()/100;
+        if(attackerProfile != null){
+            pierce += attackerProfile.getBuff("Pierce");
+        }
         double netDefense = rawDefense - pierce;
         if(netDefense < 0){
             netDefense = 0;

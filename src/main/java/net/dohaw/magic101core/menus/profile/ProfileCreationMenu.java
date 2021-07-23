@@ -5,6 +5,7 @@ import net.dohaw.corelib.StringUtils;
 import net.dohaw.corelib.menus.Menu;
 import net.dohaw.magic101core.profiles.*;
 import net.dohaw.magic101core.prompts.ProfileCreationSessionPrompt;
+import net.dohaw.magic101core.runnables.UpdatePlayerItemsRunnable;
 import net.dohaw.magic101core.utils.ALL_PROFILES;
 import net.dohaw.magic101core.utils.Constants;
 import org.bukkit.Material;
@@ -27,6 +28,7 @@ public class ProfileCreationMenu extends Menu implements Listener {
     private boolean create;
     private int slotClicked;
     private ProfileSelectionMenu prevMenu;
+    private final ItemStack PROFILE_VIEW_BOOK = createGuiItem(Material.BOOK, "&eRight Click to View Profile", new ArrayList<>());
 
     public ProfileCreationMenu(JavaPlugin plugin, ProfileCreationSession session, boolean create, int slotClicked, ProfileSelectionMenu prevMenu) {
         super(plugin, null, "Profile Creation", 45);
@@ -54,9 +56,10 @@ public class ProfileCreationMenu extends Menu implements Listener {
 
         if(create) {
             List<String> classNameLore = new ArrayList<String>() {{
-                add("&cCurrent Class Selected: &e" + (session.getSchool() == null ? "None" : session.getSchool().toString()));
+                add("&cCurrent Class Selected: &e" + (session.getSchool() == Schools.UNIVERSAL ? "None" : session.getSchool().toString()));
             }};
-            inv.setItem(15, createGuiItem(Material.STICK, "&eChange Class", classNameLore));
+            inv.setItem(15, createGuiItem(Constants.schoolsToMaterial.get(session.getSchool())
+                    , "&eChange Class", classNameLore));
         }
 
         inv.setItem(31, createGuiItem(Material.STICK, create ? "&eCreate Profile" : "&eSave", new ArrayList<>()));
@@ -120,7 +123,6 @@ public class ProfileCreationMenu extends Menu implements Listener {
         }
         //create
         else if(slotClicked == 31){
-            ALL_PROFILES.PROFILES_IN_SELECTION.remove(player.getUniqueId());
             UUID playerUUID = player.getUniqueId();
             List<Profile> profileList = ALL_PROFILES.ALL_PROFILES_MAP.get(playerUUID);
             if(create){
@@ -135,6 +137,7 @@ public class ProfileCreationMenu extends Menu implements Listener {
                 if(profileList == null){
                     profileList = new ArrayList<>();
                 }
+                ALL_PROFILES.PROFILES_IN_SELECTION.remove(player.getUniqueId());
                 Profile newProfile = new Profile(session.getProfileName(),session.getCharacterName(),session.getSchool(),
                         1,new Health(Constants.schoolToBaseHealth.get(session.getSchool())),session,
                         true);
@@ -145,11 +148,14 @@ public class ProfileCreationMenu extends Menu implements Listener {
                     oldProfile.saveProfile(player);
                 }
                 newProfile.loadProfile(player);
+                new UpdatePlayerItemsRunnable(player,PROFILE_VIEW_BOOK).runTask(plugin);
                 player.sendMessage(StringUtils.colorString("&bYou have created your class"));
                 ALL_PROFILES.ALL_PROFILES_MAP.put(playerUUID,profileList);
                 player.closeInventory();
+                player.getInventory().setItem(8,PROFILE_VIEW_BOOK);
             }
             else{
+                ALL_PROFILES.PROFILES_IN_SELECTION.remove(player.getUniqueId());
                 Profile profile = ALL_PROFILES.ALL_PROFILES_MAP.get(playerUUID).get(this.slotClicked);
                 profile.setSession(session);
                 profile.setProfileName(session.getProfileName());

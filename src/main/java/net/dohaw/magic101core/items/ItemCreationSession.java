@@ -13,7 +13,7 @@ public class ItemCreationSession {
     private List<String> lore = new ArrayList<>();
     private Material material = Material.APPLE;
     private ItemProperties itemProperties = new ItemProperties();
-    private Schools school = null;
+    private Schools school = Schools.UNIVERSAL;
     private String spellName = "None";
 
     public ItemCreationSession(){

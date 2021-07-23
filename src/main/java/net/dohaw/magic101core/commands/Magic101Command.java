@@ -43,6 +43,9 @@ public class Magic101Command implements CommandExecutor {
                     break;
 
                     //TODO add help
+                case "help":
+                    pSender.sendMessage("/magic101 customitems: Bring up custom item create/edit menu.");
+                    break;
             }
 
         }

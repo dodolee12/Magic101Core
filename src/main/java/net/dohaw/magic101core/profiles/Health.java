@@ -32,6 +32,9 @@ public class Health {
 
     //returns true if dead
     public void damage(int amount){
+        if(amount <= 0){
+            return;
+        }
         currentHealth -= amount;
         if(currentHealth < 0){
             currentHealth = 0;

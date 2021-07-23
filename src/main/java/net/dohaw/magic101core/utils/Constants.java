@@ -9,18 +9,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public final class Constants {
-    public static Map<Schools, Integer> schoolToBaseHealth = new HashMap<Schools, Integer>(){{
-        put(Schools.ICE,800);
-        put(Schools.LIFE,700);
-        put(Schools.DEATH,650);
-        put(Schools.BALANCE,650);
-        put(Schools.STORM,400);
-        put(Schools.FIRE,550);
-        put(Schools.MYTH,700);
-    }};
+    public static Map<Schools, Integer> schoolToBaseHealth = new HashMap<Schools, Integer>();
+
 
     public static Map<Schools, String> schoolsToSpellName = new HashMap<Schools,String>(){{
         put(Schools.ICE,"Resist Bubble");
@@ -32,15 +27,7 @@ public final class Constants {
         put(Schools.MYTH,"Minion");
     }};
 
-    public static Map<Schools, Material> schoolsToMaterial = new HashMap<Schools, Material>(){{
-        put(Schools.ICE,Material.ICE);
-        put(Schools.LIFE,Material.GRASS);
-        put(Schools.DEATH,Material.WITHER_SKELETON_SKULL);
-        put(Schools.BALANCE,Material.STICK);
-        put(Schools.STORM,Material.STICK);
-        put(Schools.FIRE,Material.FIRE);
-        put(Schools.MYTH,Material.STICK);
-    }};
+    public static Map<Schools, Material> schoolsToMaterial = new HashMap<>();
 
     public static Spell getSpellFromName(String spellName, Location location, ItemProperties itemProperties, Player player, JavaPlugin plugin){
         switch (spellName){
@@ -54,8 +41,18 @@ public final class Constants {
                 return new PierceBubbleSpell(location, player, plugin);
             case "Damage Bubble":
                 return new DamageBubbleSpell(location, player, plugin);
+            case "Fire Lingering AOE":
+                return new FireLingeringSpell(location, player, plugin);
+            case "Minion":
+                return new MinionSpell(location, player, plugin);
         }
         return null;
     }
+
+    public static Set<String> classProps = new HashSet<String>(){{
+        add(" Damage");
+        add(" Pierce");
+        add(" Resist");
+    }};
 }
 

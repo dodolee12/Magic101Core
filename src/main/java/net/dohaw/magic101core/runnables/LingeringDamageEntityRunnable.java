@@ -1,20 +1,17 @@
 package net.dohaw.magic101core.runnables;
 
-import net.dohaw.magic101core.profiles.Profile;
 import net.dohaw.magic101core.utils.DisplayHealthUtil;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class LingeringDamageRunnable extends BukkitRunnable {
+public class LingeringDamageEntityRunnable extends BukkitRunnable {
 
-    private Profile attackedProfile;
-    private Player attacked;
+    private LivingEntity attacked;
     private int lingeringDamage;
     private int timesToDamage = 5;
 
-    public LingeringDamageRunnable(Player attacked, Profile attackedProfile, int lingeringDamage){
+    public LingeringDamageEntityRunnable(LivingEntity attacked, int lingeringDamage){
         this.attacked = attacked;
-        this.attackedProfile = attackedProfile;
         this.lingeringDamage = lingeringDamage;
     }
 
@@ -34,15 +31,11 @@ public class LingeringDamageRunnable extends BukkitRunnable {
     public void run() {
         if(timesToDamage <= 0){
             cancel();
+            return;
         }
         --timesToDamage;
-        attackedProfile.getHealth().damage(lingeringDamage);
-        if(attackedProfile.getHealth().isDead()){
-            attackedProfile.getHealth().healToFull();
-            attacked.setHealth(0);
-            cancel();
-        }
-        DisplayHealthUtil.updateHealth(attackedProfile,attacked);
+        attacked.setHealth(attacked.getHealth() - lingeringDamage);
+        DisplayHealthUtil.updateHealth(attacked,(int) attacked.getHealth());
 
     }
 }

@@ -1,5 +1,6 @@
 package net.dohaw.magic101core.runnables;
 
+import net.dohaw.corelib.StringUtils;
 import net.dohaw.magic101core.utils.ALL_ITEMS;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -9,7 +10,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class UpdateItemsRunnable implements Runnable {
     /**
@@ -37,6 +37,14 @@ public class UpdateItemsRunnable implements Runnable {
                 if(meta == null){
                     continue;
                 }
+
+                if(checkIfProfileChange(itemStack)){
+                    if(i != 8){
+                        inventory.setItem(i,new ItemStack(Material.AIR));
+                        inventory.setItem(8,itemStack);
+                    }
+                }
+
                 if(meta.getPersistentDataContainer().has(NamespacedKey.minecraft("key"), PersistentDataType.STRING)){
                     String key = meta.getPersistentDataContainer().get(NamespacedKey.minecraft("key"), PersistentDataType.STRING);
                     if(!ALL_ITEMS.ALL_ITEMS_MAP.containsKey(key)){
@@ -48,4 +56,10 @@ public class UpdateItemsRunnable implements Runnable {
             }
         }
     }
+
+    private boolean checkIfProfileChange(ItemStack itemInHand){
+        return itemInHand.getType().equals(Material.BOOK) &&
+                itemInHand.getItemMeta().getDisplayName().equals(StringUtils.colorString("&eRight Click to Change Profile"));
+    }
+
 }

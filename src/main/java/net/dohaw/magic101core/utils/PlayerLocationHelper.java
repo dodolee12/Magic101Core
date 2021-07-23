@@ -19,7 +19,7 @@ public class PlayerLocationHelper {
         return playerList;
     }
 
-    private static double playerDistanceFromLocation(Player player, Location location){
+    public static double playerDistanceFromLocation(Player player, Location location){
         Location playerLocation = player.getLocation();
         return Math.sqrt(
                   Math.pow(playerLocation.getX() - location.getX(),2)

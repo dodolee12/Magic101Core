@@ -4,7 +4,9 @@ import org.bukkit.entity.Item;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemProperties {
     private int level = 0; //Level requirement
@@ -19,6 +21,7 @@ public class ItemProperties {
     private double lingeringDamage = 0;
     private double outgoingHealing = 0;
     private double incomingHealing = 0;
+    private Map<String,Double> classSpecificProperties = new HashMap<>();
 
     public ItemProperties(){}
 
@@ -80,6 +83,45 @@ public class ItemProperties {
         }};
     }
 
+    public List<String> getPropLoreWithoutLevel() {
+        return new ArrayList<String>() {{
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+            if (getDamage() != 0) {
+                add("&cDamage: &e+" + getDamage());
+            }
+            if (getMaxHealth() != 0) {
+                add("&cMax Health: &e+" + getMaxHealth());
+            }
+            if(getPierce() != 0){
+                add("&cPierce: &e+" + decimalFormat.format(getPierce()) + "%");
+            }
+            if(getCritChance() != 0){
+                add("&cCritical Strike Chance: &e+" + decimalFormat.format(getCritChance()) + "%");
+            }
+            if(getStunChance() != 0){
+                add("&cStun Chance: &e+" + decimalFormat.format(getStunChance()) + "%");
+            }
+            if(getDefense() != 0){
+                add("&cDefense: &e+" + decimalFormat.format(getDefense()) + "%");
+            }
+            if(getLifesteal() != 0){
+                add("&cLifesteal: &e+" + decimalFormat.format(getLifesteal()) + "%");
+            }
+            if(getLingeringChance() != 0){
+                add("&cLingering Chance: &e+" + decimalFormat.format(getLingeringChance()) + "%");
+            }
+            if(getLingeringDamage() != 0){
+                add("&cLingering Damage: &e+" + decimalFormat.format(getLingeringDamage()) + "%");
+            }
+            if(getOutgoingHealing() != 0) {
+                add("&cOutgoing Healing: &e+" + decimalFormat.format(getOutgoingHealing()) + "%");
+            }
+            if(getIncomingHealing() != 0){
+                add("&cIncoming Healing: &e+" + decimalFormat.format(getIncomingHealing()) + "%");
+            }
+        }};
+    }
+
     public static ItemProperties addTwoItemProperties(ItemProperties itemProperties1, ItemProperties itemProperties2){
         ItemProperties added = new ItemProperties();
         added.setDamage(itemProperties1.getDamage() + itemProperties2.getDamage());
@@ -95,6 +137,41 @@ public class ItemProperties {
         added.setIncomingHealing(itemProperties1.getIncomingHealing() + itemProperties2.getIncomingHealing());
 
         return added;
+    }
+
+    public List<String> getClassPropsLore(){
+        return new ArrayList<String>() {{
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+                for(String propName: classSpecificProperties.keySet()){
+                    if(classSpecificProperties.get(propName) == 0){
+                        continue;
+                    }
+                    if(propName.contains("Damage")){
+                        add("&c" + propName + ": &e+" + classSpecificProperties.get(propName).intValue());
+                    }
+                    else{
+                        add("&c" + propName + ": &e+" + decimalFormat.format(classSpecificProperties.get(propName)) + "%");
+                    }
+                }
+            }};
+    }
+
+    public List<String> getTotalPropLore(){
+        List<String> totalPropLore = getPropLore();
+        if(getClassPropsLore().size() > 0){
+            totalPropLore.add("---------------------");
+            totalPropLore.addAll(getClassPropsLore());
+        }
+        totalPropLore.add("---------------------");
+        return totalPropLore;
+    }
+
+    public void setClassProperty(String name, double amount){
+        classSpecificProperties.put(name,amount);
+    }
+
+    public double getClassProperty(String name){
+        return classSpecificProperties.getOrDefault(name,0d);
     }
 
     public int getLevel() {
@@ -191,6 +268,10 @@ public class ItemProperties {
 
     public void setIncomingHealing(double incomingHealing) {
         this.incomingHealing = incomingHealing;
+    }
+
+    public void setClassSpecificProperties(Map<String,Double> classSpecificProperties){
+        this.classSpecificProperties = classSpecificProperties;
     }
 }
 

@@ -1,18 +1,17 @@
 package net.dohaw.magic101core.runnables;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class StunPlayerRunnable extends BukkitRunnable {
+public class StunEntityRunnable extends BukkitRunnable {
 
-    private Player player;
+    private LivingEntity entity;
     private Location stunLocation;
     private int timesToStun = 30;
 
-    public StunPlayerRunnable(Player player, Location location){
-        this.player = player;
+    public StunEntityRunnable(LivingEntity entity, Location location){
+        this.entity = entity;
         this.stunLocation = location;
     }
 
@@ -34,6 +33,6 @@ public class StunPlayerRunnable extends BukkitRunnable {
             cancel();
         }
         --timesToStun;
-        player.teleport(stunLocation);
+        entity.teleport(stunLocation);
     }
 }
