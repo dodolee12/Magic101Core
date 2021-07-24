@@ -2,6 +2,7 @@ package net.dohaw.magic101core.utils;
 
 import net.dohaw.magic101core.items.ItemProperties;
 import net.dohaw.magic101core.profiles.Profile;
+import net.dohaw.magic101core.profiles.Schools;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -10,6 +11,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PropertyHelper {
 
@@ -48,6 +52,25 @@ public class PropertyHelper {
         aggregatedProperties.setLingeringDamage(aggregatedProperties.getLingeringDamage() + getDoubleFromPDC(pdc, "lingering-damage"));
         aggregatedProperties.setOutgoingHealing(aggregatedProperties.getOutgoingHealing() + getDoubleFromPDC(pdc, "outgoing-healing"));
         aggregatedProperties.setIncomingHealing(aggregatedProperties.getIncomingHealing() + getDoubleFromPDC(pdc, "incoming-healing"));
+
+        Map<String,Double> classSpecificProps = new HashMap<>();
+        for(Schools school: Schools.values()) {
+            if (school == Schools.UNIVERSAL) {
+                continue;
+            }
+            String schoolPrefix = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase());
+
+            for(String prop: Constants.classProps){
+                String fieldName = schoolPrefix + prop;
+                String fieldKey = fieldName.replace(" ","-").toLowerCase();
+                if(pdc.has(NamespacedKey.minecraft(fieldKey), PersistentDataType.DOUBLE)){
+                    double propAmount = pdc.get(NamespacedKey.minecraft(fieldKey), PersistentDataType.DOUBLE);
+                    classSpecificProps.put(fieldName, aggregatedProperties.getClassProperty(fieldName) + propAmount);
+                }
+            }
+        }
+
+        aggregatedProperties.setClassSpecificProperties(classSpecificProps);
 
         return aggregatedProperties;
     }

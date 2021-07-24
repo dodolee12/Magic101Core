@@ -61,6 +61,7 @@ public class DamageHelper {
             damage += classDamages.get(school);
         }
 
+
         //incoming healing affects lifesteal
 
         int lifeToSteal = (int) (damage * (damageProps.getLifesteal()/100) * (1 + damageProps.getIncomingHealing()/100));
@@ -94,7 +95,7 @@ public class DamageHelper {
     private static Map<Schools,Integer> getClassDamages(ItemProperties damageProps){
         Map<Schools, Integer> classDamages = new HashMap<>();
         for(Schools school: Schools.values()){
-            String fieldName = school.toString().toLowerCase() + "-damage";
+            String fieldName = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Damage";
             if(damageProps.getClassProperty(fieldName) != 0){
                 classDamages.put(school,(int) damageProps.getClassProperty(fieldName));
             }
@@ -105,16 +106,16 @@ public class DamageHelper {
     private static Map<Schools,Integer> applyClassDefenseAndPierce(Map<Schools,Integer> classDamages, ItemProperties damageProps,
                                                                    ItemProperties damagedPlayerProps){
         for(Schools school: classDamages.keySet()){
-            String defenseFieldName = school.toString().toLowerCase() + "-resist";
-            String pierceFieldName = school.toString().toLowerCase() + "-pierce";
+            String defenseFieldName = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Resist";
+            String pierceFieldName = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Pierce";
 
             //no need to check if theres no defense
-            double rawDefense = damagedPlayerProps.getClassProperty(defenseFieldName);
+            double rawDefense = damagedPlayerProps.getClassProperty(defenseFieldName)/100;
             if(rawDefense == 0){
                 continue;
             }
 
-            double pierce = damageProps.getClassProperty(pierceFieldName);
+            double pierce = damageProps.getClassProperty(pierceFieldName)/100;
 
             double netDefense = rawDefense - pierce;
             if(netDefense < 0){

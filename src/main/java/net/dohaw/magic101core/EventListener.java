@@ -150,8 +150,8 @@ public class EventListener implements Listener {
             }
         }
         if(attacker instanceof LivingEntity && attacked instanceof LivingEntity){
-            DamageHelper.damageHandler((LivingEntity) attacker,(LivingEntity) attacked,plugin);
             e.setDamage(0);
+            DamageHelper.damageHandler((LivingEntity) attacker,(LivingEntity) attacked,plugin);
         }
 
     }
