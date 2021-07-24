@@ -114,16 +114,30 @@ public class EventListener implements Listener {
                 return;
             }
 
+            if(activeProfile.isOnCooldown()){
+                player.sendMessage("Your " + spellName + " is currently on cooldown");
+                return;
+            }
+
             Location playerLocation = player.getLocation();
 
             ItemProperties aggregatedProperties = PropertyHelper.getAggregatedItemProperties(player);
 
             Spell spell = Constants.getSpellFromName(spellName, playerLocation, aggregatedProperties, player, plugin);
 
+            cooldownHandler(activeProfile, player, spellName);
 
             spell.cast();
 
         }
+    }
+
+    private void cooldownHandler(Profile profile, Player player, String spellName){
+        profile.setOnCooldown(true);
+        Bukkit.getScheduler().runTaskLater(plugin, () ->{
+            profile.setOnCooldown(false);
+            player.sendMessage("Your " + spellName + " can now be used");
+        },Constants.spellToCooldown.get(spellName)*20);
     }
 
     private boolean checkIfProfileChange(ItemStack itemInHand){
@@ -140,6 +154,7 @@ public class EventListener implements Listener {
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent e){
         Entity attacker = e.getDamager();
         Entity attacked = e.getEntity();
+        e.setDamage(0);
 
         if(attacker instanceof Player){
             Player attackerPlayer = (Player) attacker;
@@ -150,7 +165,6 @@ public class EventListener implements Listener {
             }
         }
         if(attacker instanceof LivingEntity && attacked instanceof LivingEntity){
-            e.setDamage(0);
             DamageHelper.damageHandler((LivingEntity) attacker,(LivingEntity) attacked,plugin);
         }
 

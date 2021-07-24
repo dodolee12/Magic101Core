@@ -30,6 +30,7 @@ public class Magic101Command implements CommandExecutor {
             Player pSender = (Player) sender;
             String firstArg = args[0];
             switch(firstArg){
+                case "ci":
 
                 case "customitems":
                     if(!pSender.isOp()){

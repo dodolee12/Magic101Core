@@ -31,6 +31,7 @@ public class Profile {
     private ItemStack[] extraItems;
     private Location logoutLocation;
     private Map<String, Double> inGameBuffsMap = new HashMap<>();
+    private boolean onCooldown;
 
 
     public Profile(String profileName, String characterName, Schools school, int level, Health health, ProfileCreationSession session, boolean active){
@@ -42,6 +43,7 @@ public class Profile {
         this.session = session;
         this.active = active;
         this.logoutLocation = Bukkit.getWorld("world").getSpawnLocation();
+        this.onCooldown = false;
     }
 
     //constructor for laoading
@@ -58,6 +60,7 @@ public class Profile {
         this.equippedArmor = equippedArmor;
         this.storageItems = storageItems;
         this.extraItems = extraItems;
+        this.onCooldown = false;
     }
 
     //eventually add inventory
@@ -201,5 +204,13 @@ public class Profile {
 
     public double getBuff(String buff){
         return inGameBuffsMap.getOrDefault(buff,0D);
+    }
+
+    public boolean isOnCooldown() {
+        return onCooldown;
+    }
+
+    public void setOnCooldown(boolean onCooldown) {
+        this.onCooldown = onCooldown;
     }
 }

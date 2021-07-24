@@ -36,8 +36,14 @@ public class SpawnSphereParticlesRunnable extends BukkitRunnable {
         }
         --seconds;
 
+        boolean toggle = true;
+
         for (Location location : sphere) {
-            location.getWorld().spawnParticle(Particle.REDSTONE, location, 5, new Particle.DustOptions(color, 1));
+            toggle = !toggle;
+            if(toggle){
+                continue;
+            }
+            location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, new Particle.DustOptions(color, 1));
         }
     }
 }

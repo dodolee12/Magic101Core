@@ -54,5 +54,16 @@ public final class Constants {
         add(" Pierce");
         add(" Resist");
     }};
+
+    //cd in sec
+    public static Map<String,Integer> spellToCooldown = new HashMap<String,Integer>(){{
+        put("Resist Bubble",60);
+        put("Life Bubble",60);
+        put("Pierce Bubble",60);
+        put("Critical Bubble",60);
+        put("Damage Bubble",60);
+        put("Fire Lingering AOE",60);
+        put("Minion",60);
+    }};
 }
 
