@@ -201,6 +201,18 @@ public class EventListener implements Listener {
         },1);
     }
 
+    @EventHandler
+    public void onDeath(PlayerDeathEvent e){
+        Player player = e.getEntity();
+        Profile activeProfile = ALL_PROFILES.findActiveProfile(player.getUniqueId());
+        if(activeProfile != null){
+            activeProfile.getHealth().healToFull();
+            activeProfile.saveProfile(player);
+
+            player.getInventory().clear();
+        }
+    }
+
 
     private boolean itemIsUsable(Profile profile, ItemStack item){
 
