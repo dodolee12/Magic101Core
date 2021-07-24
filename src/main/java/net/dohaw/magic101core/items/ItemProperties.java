@@ -166,6 +166,16 @@ public class ItemProperties {
         return totalPropLore;
     }
 
+    public List<String> getTotalPropLoreWithoutLevel(){
+        List<String> totalPropLore = getPropLoreWithoutLevel();
+        if(getClassPropsLore().size() > 0){
+            totalPropLore.add("---------------------");
+            totalPropLore.addAll(getClassPropsLore());
+        }
+        totalPropLore.add("---------------------");
+        return totalPropLore;
+    }
+
     public void setClassProperty(String name, double amount){
         classSpecificProperties.put(name,amount);
     }

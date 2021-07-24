@@ -38,7 +38,7 @@ public class ProfileViewMenu extends Menu implements Listener{
                 add("&cLevel: " + profile.getLevel());
                 add("Health: " + profile.getHealth().getCurrentHealth() + " / " + profile.getHealth().getMaxHealth());
             }};
-        List<String> propLore = PropertyHelper.getAggregatedItemProperties(player).getPropLoreWithoutLevel();
+        List<String> propLore = PropertyHelper.getAggregatedItemProperties(player).getTotalPropLoreWithoutLevel();
 
 
         inv.setItem(13,createGuiItem(Material.PLAYER_HEAD,"Your Profile",profileLore));
