@@ -4,6 +4,7 @@ import com.codingforcookies.armorequip.ArmorEquipEvent;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
 import net.dohaw.corelib.StringUtils;
 import net.dohaw.corelib.menus.Menu;
+import net.dohaw.magic101core.items.CustomItem;
 import net.dohaw.magic101core.items.ItemProperties;
 import net.dohaw.magic101core.menus.profile.ProfileSelectionMenu;
 import net.dohaw.magic101core.menus.profile.ProfileViewMenu;
@@ -16,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,6 +34,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public class EventListener implements Listener {
 
@@ -174,7 +178,43 @@ public class EventListener implements Listener {
     public void onMythicMobSpawn(MythicMobSpawnEvent e){
         Entity mythicmob = e.getEntity();
         if(mythicmob instanceof LivingEntity){
-            DisplayHealthUtil.updateHealth(mythicmob, (int) ((LivingEntity) mythicmob).getHealth());
+            LivingEntity mmLE = (LivingEntity) mythicmob;
+            DisplayHealthUtil.updateHealth(mythicmob, (int) mmLE.getHealth());
+            replaceEquips(mmLE);
+        }
+    }
+
+    private void replaceEquips(LivingEntity mm){
+        EntityEquipment mmEquipment = mm.getEquipment();
+        if(mmEquipment == null){
+            return;
+        }
+        //replace all equipment
+        mmEquipment.setHelmet(getCustomItemFromMMItem(mmEquipment.getHelmet()));
+        mmEquipment.setChestplate(getCustomItemFromMMItem(mmEquipment.getChestplate()));
+        mmEquipment.setLeggings(getCustomItemFromMMItem(mmEquipment.getLeggings()));
+        mmEquipment.setBoots(getCustomItemFromMMItem(mmEquipment.getBoots()));
+        mmEquipment.setItemInMainHand(getCustomItemFromMMItem(mmEquipment.getItemInMainHand()));
+        mmEquipment.setItemInOffHand(getCustomItemFromMMItem(mmEquipment.getItemInOffHand()));
+    }
+
+    private ItemStack getCustomItemFromMMItem(ItemStack equip) {
+        if (equip == null) {
+            return null;
+        }
+        ItemMeta meta = equip.getItemMeta();
+        if (meta == null) {
+            return equip;
+        }
+        String displayName = meta.getDisplayName();
+        return ALL_ITEMS.ALL_ITEMS_MAP.containsKey(displayName) ? ALL_ITEMS.ALL_ITEMS_MAP.get(displayName).toItemStack() : equip;
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent e){
+        List<ItemStack> dropsList = e.getDrops();
+        for(int i = 0; i < dropsList.size(); ++i){
+            dropsList.set(i,getCustomItemFromMMItem(dropsList.get(i)));
         }
     }
 
