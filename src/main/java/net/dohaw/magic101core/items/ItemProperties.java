@@ -13,6 +13,7 @@ public class ItemProperties {
     private int damage = 0;
     private int maxHealth = 0; // increase max health
     private double pierce = 0; //pierce percentage
+    private double strength = 0;
     private double critChance = 0; //
     private double stunChance = 0;
     private double defense = 0;
@@ -25,13 +26,14 @@ public class ItemProperties {
 
     public ItemProperties(){}
 
-    public ItemProperties(int level, int damage, int maxHealth, double pierce, double critChance, double stunChance,
+    public ItemProperties(int level, int damage, int maxHealth, double pierce, double strength, double critChance, double stunChance,
                           double defense, double lifesteal, double lingeringChance, double lingeringDamage,
                           double outgoingHealing, double incomingHealing){
         this.level = level;
         this.damage = damage;
         this.maxHealth = maxHealth;
         this.pierce = pierce;
+        this.strength = strength;
         this.critChance = critChance;
         this.stunChance = stunChance;
         this.defense = defense;
@@ -55,6 +57,9 @@ public class ItemProperties {
             }
             if(getPierce() != 0){
                 add("&cPierce: &e+" + decimalFormat.format(getPierce()) + "%");
+            }
+            if(getStrength() != 0){
+                add("&cStrength: &e+" + decimalFormat.format(getStrength()) + "%");
             }
             if(getCritChance() != 0){
                 add("&cCritical Strike Chance: &e+" + decimalFormat.format(getCritChance()) + "%");
@@ -95,6 +100,9 @@ public class ItemProperties {
             if(getPierce() != 0){
                 add("&cPierce: &e+" + decimalFormat.format(getPierce()) + "%");
             }
+            if(getStrength() != 0){
+                add("&cStrength: &e+" + decimalFormat.format(getStrength()) + "%");
+            }
             if(getCritChance() != 0){
                 add("&cCritical Strike Chance: &e+" + decimalFormat.format(getCritChance()) + "%");
             }
@@ -127,6 +135,7 @@ public class ItemProperties {
         added.setDamage(itemProperties1.getDamage() + itemProperties2.getDamage());
         added.setMaxHealth(itemProperties1.getMaxHealth() + itemProperties2.getMaxHealth());
         added.setPierce(itemProperties1.getPierce() + itemProperties2.getPierce());
+        added.setStrength(itemProperties1.getStrength() + itemProperties2.getStrength());
         added.setCritChance(itemProperties1.getCritChance() + itemProperties2.getCritChance());
         added.setStunChance(itemProperties1.getStunChance() + itemProperties2.getStunChance());
         added.setDefense(itemProperties1.getDefense() + itemProperties2.getDefense());
@@ -282,6 +291,14 @@ public class ItemProperties {
 
     public void setClassSpecificProperties(Map<String,Double> classSpecificProperties){
         this.classSpecificProperties = classSpecificProperties;
+    }
+
+    public double getStrength() {
+        return strength;
+    }
+
+    public void setStrength(double strength) {
+        this.strength = strength;
     }
 }
 

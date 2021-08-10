@@ -39,8 +39,15 @@ public class DamageHelper {
 
         Map<Schools,Integer> classDamages = getClassDamages(damageProps);
 
+        Schools damageClass = Schools.UNIVERSAL;
+        //add class damages
+        for(Schools school: classDamages.keySet()){
+            damage += classDamages.get(school);
+            damageClass = school;
+        }
+
         //check if crit
-        damage = applyCritChance(damage,damageProps,attackerActiveProfile);
+        damage = applyCritChance(damage,damageProps,attackerActiveProfile, damageClass);
 
         //check if stun
         boolean stun = checkStun(damageProps);
@@ -56,10 +63,7 @@ public class DamageHelper {
 
         classDamages = applyClassDefenseAndPierce(classDamages,damageProps,damagedPlayerProps);
 
-        //add class damages
-        for(Schools school: classDamages.keySet()){
-            damage += classDamages.get(school);
-        }
+
 
 
         //incoming healing affects lifesteal
@@ -98,6 +102,7 @@ public class DamageHelper {
             String fieldName = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Damage";
             if(damageProps.getClassProperty(fieldName) != 0){
                 classDamages.put(school,(int) damageProps.getClassProperty(fieldName));
+                return classDamages;
             }
         }
         return classDamages;
@@ -172,12 +177,17 @@ public class DamageHelper {
 
     //input: damage in
     //output: damage after applying crit (if needed)
-    private static int applyCritChance(int damage, ItemProperties damageProps, Profile profile){
+    private static int applyCritChance(int damage, ItemProperties damageProps, Profile profile, Schools damageClass){
         double critChance = damageProps.getCritChance()/100;
         if(profile != null){
             critChance += profile.getBuff("Critical strike chance");
 
         }
+
+        if(damageClass != Schools.UNIVERSAL){
+            //damageProps.getClassProperty()
+        }
+
         if(critChance > 0 && RNG.nextDouble() < critChance){
             damage *= 2;
         }
