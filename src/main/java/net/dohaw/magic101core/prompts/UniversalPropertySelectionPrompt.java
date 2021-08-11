@@ -18,6 +18,7 @@ public class UniversalPropertySelectionPrompt extends StringPrompt {
     public enum Change {
         LEVEL,
         DAMAGE,
+        STRENGTH,
         MAX_HEALTH,
         PIERCE,
         CRIT_CHANCE,
@@ -49,6 +50,9 @@ public class UniversalPropertySelectionPrompt extends StringPrompt {
                 break;
             case MAX_HEALTH:
                 returnText = "Please type how much health this item should give. Must be an integer number.";
+                break;
+            case STRENGTH:
+                returnText = "Please type how much strength this item should give. Must be a number between 0 and 1.";
                 break;
             case PIERCE:
                 returnText = "Please type how much pierce this item should give. Must be a number between 0 and 1.";
@@ -113,6 +117,13 @@ public class UniversalPropertySelectionPrompt extends StringPrompt {
                     break;
                 }
                 properties.setPierce(pierce);
+                break;
+            case STRENGTH:
+                double strength = validateDouble(input, player);
+                if(Double.isNaN(strength)){
+                    break;
+                }
+                properties.setStrength(strength);
                 break;
             case CRIT_CHANCE:
                 double critChance = validateDouble(input, player);

@@ -46,6 +46,9 @@ public class DamageHelper {
             damageClass = school;
         }
 
+        //add strength
+        damage = applyStrength(damage,damageProps,damageClass);
+
         //check if crit
         damage = applyCritChance(damage,damageProps,attackerActiveProfile, damageClass);
 
@@ -59,12 +62,7 @@ public class DamageHelper {
         ItemProperties damagedPlayerProps = PropertyHelper.getAggregatedItemProperties(attacked);
 
         //defense + pierce
-        damage = applyDefenseAndPierce(damage, damageProps, damagedPlayerProps, attackerActiveProfile, attackedActiveProfile);
-
-        classDamages = applyClassDefenseAndPierce(classDamages,damageProps,damagedPlayerProps);
-
-
-
+        damage = applyDefenseAndPierce(damage, damageProps, damagedPlayerProps, attackerActiveProfile, attackedActiveProfile, damageClass);
 
         //incoming healing affects lifesteal
 
@@ -104,31 +102,6 @@ public class DamageHelper {
                 classDamages.put(school,(int) damageProps.getClassProperty(fieldName));
                 return classDamages;
             }
-        }
-        return classDamages;
-    }
-
-    private static Map<Schools,Integer> applyClassDefenseAndPierce(Map<Schools,Integer> classDamages, ItemProperties damageProps,
-                                                                   ItemProperties damagedPlayerProps){
-        for(Schools school: classDamages.keySet()){
-            String defenseFieldName = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Resist";
-            String pierceFieldName = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Pierce";
-
-            //no need to check if theres no defense
-            double rawDefense = damagedPlayerProps.getClassProperty(defenseFieldName)/100;
-            if(rawDefense == 0){
-                continue;
-            }
-
-            double pierce = damageProps.getClassProperty(pierceFieldName)/100;
-
-            double netDefense = rawDefense - pierce;
-            if(netDefense < 0){
-                netDefense = 0;
-            }
-            int damage = classDamages.get(school);
-
-            classDamages.put(school,(int) (damage * (1 - netDefense)));
         }
         return classDamages;
     }
@@ -181,11 +154,11 @@ public class DamageHelper {
         double critChance = damageProps.getCritChance()/100;
         if(profile != null){
             critChance += profile.getBuff("Critical strike chance");
-
         }
 
         if(damageClass != Schools.UNIVERSAL){
-            //damageProps.getClassProperty()
+            String critFieldName = StringUtil.capitalizeFirstLetter(damageClass.toString().toLowerCase()) + " Critical Rating";
+            critChance += damageProps.getClassProperty(critFieldName)/100;
         }
 
         if(critChance > 0 && RNG.nextDouble() < critChance){
@@ -208,7 +181,7 @@ public class DamageHelper {
 
     //input damage, output damage after defense and pierce
     private static int applyDefenseAndPierce(int damage, ItemProperties damageProps, ItemProperties damagedPlayerProps,
-                                             Profile attackerProfile, Profile attackedProfile){
+                                             Profile attackerProfile, Profile attackedProfile, Schools damageClass){
 
 
         double rawDefense = damagedPlayerProps.getDefense()/100;
@@ -219,10 +192,32 @@ public class DamageHelper {
         if(attackerProfile != null){
             pierce += attackerProfile.getBuff("Pierce");
         }
+
+        if(damageClass != Schools.UNIVERSAL){
+            String defenseFieldName = StringUtil.capitalizeFirstLetter(damageClass.toString().toLowerCase()) + " Resist";
+            String pierceFieldName = StringUtil.capitalizeFirstLetter(damageClass.toString().toLowerCase()) + " Pierce";
+
+            rawDefense += damageProps.getClassProperty(defenseFieldName)/100;
+            pierce += damageProps.getClassProperty(pierceFieldName)/100;
+        }
+
         double netDefense = rawDefense - pierce;
         if(netDefense < 0){
             netDefense = 0;
         }
         return (int) (damage * (1 - netDefense));
+    }
+
+    private static int applyStrength(int damage, ItemProperties damageProps, Schools damageClass){
+        double strength = damageProps.getStrength()/100;
+
+        if(damageClass != Schools.UNIVERSAL){
+            String strengthFieldName = StringUtil.capitalizeFirstLetter(damageClass.toString().toLowerCase()) + " Strength";
+            strength += damageProps.getClassProperty(strengthFieldName)/100;
+        }
+
+        System.out.println(strength);
+
+        return (int) (damage * (1 + strength));
     }
 }

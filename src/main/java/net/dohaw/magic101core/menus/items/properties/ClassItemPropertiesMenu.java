@@ -47,10 +47,14 @@ public class ClassItemPropertiesMenu extends Menu implements Listener {
             String damageProp = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Damage";
             String pierceProp = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Pierce";
             String resistProp = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Resist";
+            String critChanceProp = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Critical Rating";
+            String strengthProp = StringUtil.capitalizeFirstLetter(school.toString().toLowerCase()) + " Strength";
 
             setItem(i + 9, Material.PAPER,damageProp,(int) sessionProps.getClassProperty(damageProp),true,false);
             setItem(i + 18, Material.PAPER,pierceProp,sessionProps.getClassProperty(pierceProp),true,true);
             setItem(i + 27, Material.PAPER,resistProp,sessionProps.getClassProperty(resistProp),true,true);
+            setItem(i + 36, Material.PAPER,critChanceProp,sessionProps.getClassProperty(critChanceProp),true,true);
+            setItem(i + 45, Material.PAPER,strengthProp,sessionProps.getClassProperty(strengthProp),true,true);
 
             ++i;
         }

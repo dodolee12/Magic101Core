@@ -53,6 +53,8 @@ public final class Constants {
         add(" Damage");
         add(" Pierce");
         add(" Resist");
+        add(" Critical Rating");
+        add(" Strength");
     }};
 
     //cd in sec

@@ -49,6 +49,7 @@ public class CustomItem {
         int damage = pdc.get(NamespacedKey.minecraft("damage"), PersistentDataType.INTEGER);
         int maxHealth = pdc.get(NamespacedKey.minecraft("max-health"), PersistentDataType.INTEGER);
         double pierce = pdc.get(NamespacedKey.minecraft("pierce"), PersistentDataType.DOUBLE);
+        double strength = pdc.get(NamespacedKey.minecraft("strength"), PersistentDataType.DOUBLE);
         double critChance = pdc.get(NamespacedKey.minecraft("crit-chance"), PersistentDataType.DOUBLE);
         double stunChance = pdc.get(NamespacedKey.minecraft("stun-chance"), PersistentDataType.DOUBLE);
         double defense = pdc.get(NamespacedKey.minecraft("defense"), PersistentDataType.DOUBLE);
@@ -75,7 +76,7 @@ public class CustomItem {
             }
         }
 
-        ItemProperties itemProperties = new ItemProperties(level, damage, maxHealth, pierce, critChance, stunChance,
+        ItemProperties itemProperties = new ItemProperties(level, damage, maxHealth, pierce, strength, critChance, stunChance,
                 defense, lifesteal, lingeringChance, lingeringDamage, outgoingHealing, incomingHealing);
         itemProperties.setClassSpecificProperties(classProps);
         this.itemProperties = itemProperties;
@@ -143,6 +144,7 @@ public class CustomItem {
         pdc.set(NamespacedKey.minecraft("damage"), PersistentDataType.INTEGER, itemProperties.getDamage());
         pdc.set(NamespacedKey.minecraft("max-health"), PersistentDataType.INTEGER, itemProperties.getMaxHealth());
         pdc.set(NamespacedKey.minecraft("pierce"), PersistentDataType.DOUBLE, itemProperties.getPierce());
+        pdc.set(NamespacedKey.minecraft("strength"), PersistentDataType.DOUBLE, itemProperties.getStrength());
         pdc.set(NamespacedKey.minecraft("crit-chance"), PersistentDataType.DOUBLE, itemProperties.getCritChance());
         pdc.set(NamespacedKey.minecraft("stun-chance"), PersistentDataType.DOUBLE, itemProperties.getStunChance());
         pdc.set(NamespacedKey.minecraft("defense"), PersistentDataType.DOUBLE, itemProperties.getDefense());

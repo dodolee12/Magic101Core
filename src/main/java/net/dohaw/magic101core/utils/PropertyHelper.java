@@ -44,6 +44,7 @@ public class PropertyHelper {
         aggregatedProperties.setDamage(aggregatedProperties.getDamage() + getIntegerFromPDC(pdc, "damage"));
         aggregatedProperties.setMaxHealth(aggregatedProperties.getMaxHealth() + getIntegerFromPDC(pdc, "max-health"));
         aggregatedProperties.setPierce(aggregatedProperties.getPierce() + getDoubleFromPDC(pdc, "pierce"));
+        aggregatedProperties.setStrength(aggregatedProperties.getStrength() + getDoubleFromPDC(pdc, "strength"));
         aggregatedProperties.setCritChance(aggregatedProperties.getCritChance() + getDoubleFromPDC(pdc, "crit-chance"));
         aggregatedProperties.setStunChance(aggregatedProperties.getStunChance() + getDoubleFromPDC(pdc, "stun-chance"));
         aggregatedProperties.setDefense(aggregatedProperties.getDefense() + getDoubleFromPDC(pdc, "defense"));

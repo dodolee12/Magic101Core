@@ -37,8 +37,9 @@ public class UniversalItemPropertiesMenu extends Menu implements Listener {
     public void initializeItems(Player player) {
         ItemProperties sessionProperties = session.getItemProperties();
 
+        setItem(4,Material.PAPER, "Damage", sessionProperties.getDamage(), true, false);
         setItem(10,Material.PAPER, "Level", sessionProperties.getLevel(), false, false);
-        setItem(12,Material.PAPER, "Damage", sessionProperties.getDamage(),true,false);
+        setItem(12,Material.PAPER, "Strength", sessionProperties.getStrength(),true,true);
         setItem(14,Material.PAPER, "Max Health", sessionProperties.getMaxHealth(),true, false);
         setItem(16,Material.PAPER, "Pierce", sessionProperties.getPierce(), true, true);
         setItem(19,Material.PAPER, "Critical Strike Chance", sessionProperties.getCritChance(), true, true);
@@ -114,8 +115,9 @@ public class UniversalItemPropertiesMenu extends Menu implements Listener {
     }
 
     private final Map<Integer, UniversalPropertySelectionPrompt.Change> slotToChange = new HashMap<Integer, UniversalPropertySelectionPrompt.Change>(){{
+        put(4, UniversalPropertySelectionPrompt.Change.DAMAGE);
         put(10, UniversalPropertySelectionPrompt.Change.LEVEL);
-        put(12, UniversalPropertySelectionPrompt.Change.DAMAGE);
+        put(12, UniversalPropertySelectionPrompt.Change.STRENGTH);
         put(14, UniversalPropertySelectionPrompt.Change.MAX_HEALTH);
         put(16, UniversalPropertySelectionPrompt.Change.PIERCE);
         put(19, UniversalPropertySelectionPrompt.Change.CRIT_CHANCE);
