@@ -174,7 +174,7 @@ public class EventListener implements Listener {
 
     }
 
-    @EventHandler
+    //@EventHandler
     public void onMythicMobSpawn(MythicMobSpawnEvent e){
         Entity mythicmob = e.getEntity();
         if(mythicmob instanceof LivingEntity){

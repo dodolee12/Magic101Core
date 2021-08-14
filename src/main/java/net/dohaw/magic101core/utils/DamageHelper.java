@@ -216,8 +216,6 @@ public class DamageHelper {
             strength += damageProps.getClassProperty(strengthFieldName)/100;
         }
 
-        System.out.println(strength);
-
         return (int) (damage * (1 + strength));
     }
 }
