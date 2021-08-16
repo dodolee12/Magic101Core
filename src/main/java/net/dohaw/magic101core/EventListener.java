@@ -174,13 +174,15 @@ public class EventListener implements Listener {
 
     }
 
-    //@EventHandler
+    @EventHandler
     public void onMythicMobSpawn(MythicMobSpawnEvent e){
         Entity mythicmob = e.getEntity();
         if(mythicmob instanceof LivingEntity){
             LivingEntity mmLE = (LivingEntity) mythicmob;
             DisplayHealthUtil.updateHealth(mythicmob, (int) mmLE.getHealth());
-            replaceEquips(mmLE);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                replaceEquips(mmLE);
+            },10);
         }
     }
 
@@ -207,14 +209,22 @@ public class EventListener implements Listener {
             return equip;
         }
         String displayName = meta.getDisplayName();
+        if(displayName.length() < 2){
+            return equip;
+        }
+        displayName = displayName.substring(2);
+        plugin.getLogger().info(equip.getType() + "");
+        plugin.getLogger().info("Display name: " + displayName);
+        plugin.getLogger().info("" + ALL_ITEMS.ALL_ITEMS_MAP.containsKey(displayName));
         return ALL_ITEMS.ALL_ITEMS_MAP.containsKey(displayName) ? ALL_ITEMS.ALL_ITEMS_MAP.get(displayName).toItemStack() : equip;
     }
 
     @EventHandler
-    public void onEntityDeath(EntityDeathEvent e){
-        List<ItemStack> dropsList = e.getDrops();
-        for(int i = 0; i < dropsList.size(); ++i){
-            dropsList.set(i,getCustomItemFromMMItem(dropsList.get(i)));
+    public void onEntityPickupItem(EntityPickupItemEvent e){
+        if(e.getEntity() instanceof Player){
+            Item item = e.getItem();
+            ItemStack oldItemStack = item.getItemStack();
+            item.setItemStack(getCustomItemFromMMItem(oldItemStack));
         }
     }
 
@@ -232,27 +242,8 @@ public class EventListener implements Listener {
         Profile activeProfile = ALL_PROFILES.findActiveProfile(player.getUniqueId());
         if(activeProfile != null){
             activeProfile.getHealth().healToFull();
-            activeProfile.saveProfile(player);
-
-            player.getInventory().clear();
-        }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            MenuUtil.openProfileSelectionMenu(plugin,player);
-        },1);
-    }
-
-    @EventHandler
-    public void onDeath(PlayerDeathEvent e){
-        Player player = e.getEntity();
-        Profile activeProfile = ALL_PROFILES.findActiveProfile(player.getUniqueId());
-        if(activeProfile != null){
-            activeProfile.getHealth().healToFull();
-            activeProfile.saveProfile(player);
-
-            player.getInventory().clear();
         }
     }
-
 
     private boolean itemIsUsable(Profile profile, ItemStack item){
 
