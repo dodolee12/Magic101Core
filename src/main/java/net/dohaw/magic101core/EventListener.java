@@ -1,6 +1,6 @@
 package net.dohaw.magic101core;
 
-import com.codingforcookies.armorequip.ArmorEquipEvent;
+import com.jeff_media.armorequipevent.ArmorEquipEvent;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
 import net.dohaw.corelib.StringUtils;
 import net.dohaw.corelib.menus.Menu;
