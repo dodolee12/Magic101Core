@@ -15,6 +15,7 @@ import net.dohaw.magic101core.utils.Constants;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import com.jeff_media.armorequipevent.ArmorEquipEvent;
 
 
 
@@ -27,6 +28,7 @@ public final class Magic101Core extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        ArmorEquipEvent.registerListener(this);
         CoreLib.setInstance(this);
         validateConfigs();
         loadCustomConfigs();
